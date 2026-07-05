@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redragon K629CGO-PRO-M Controller</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Redragon K629CGO-PRO-M Controller</h1>
+      <span id="connection-badge" class="badge badge-disconnected">Disconnected</span>
+    </header>
+
+    <div id="toolbar">
+      <div class="toolbar-group" id="effect-group">
+        <span class="group-label">Effects</span>
+        <button data-effect="static" class="btn btn-effect btn-active">Static</button>
+        <button data-effect="rainbow" class="btn btn-effect">Rainbow</button>
+        <button data-effect="wave" class="btn btn-effect">Wave</button>
+      </div>
+
+      <div class="toolbar-group">
+        <span class="group-label">Brightness</span>
+        <div class="slider-container">
+          <input type="range" id="brightness-slider" min="0" max="10" value="10" step="1">
+          <span id="brightness-value" class="slider-value">3</span>
+        </div>
+      </div>
+
+      <div class="toolbar-group">
+        <span class="group-label">Speed</span>
+        <div class="slider-container">
+          <input type="range" id="speed-slider" min="0" max="5" value="2" step="1">
+          <span id="speed-value" class="slider-value">2</span>
+        </div>
+      </div>
+
+      <div class="toolbar-group">
+        <button id="single-color-btn" class="btn">Apply Color</button>
+        <input type="color" id="single-color-picker" value="#ff6600" class="color-swatch">
+        <button id="apply-selected-btn" class="btn btn-selected">Apply to Selected</button>
+        <button id="clear-selection-btn" class="btn">Clear Sel</button>
+        <span id="selection-info" class="selection-info"></span>
+        <button id="reset-btn" class="btn btn-danger">Reset</button>
+      </div>
+    </div>
+
+    <div id="toolbar2">
+      <div class="toolbar-group">
+        <span class="group-label">Profiles</span>
+        <select id="profile-select" class="profile-select">
+          <option value="">-- Select Profile --</option>
+        </select>
+        <button id="profile-load-btn" class="btn">Load</button>
+        <input type="text" id="profile-name-input" class="profile-name-input" placeholder="Profile name...">
+        <button id="profile-save-btn" class="btn btn-selected">Save</button>
+        <button id="profile-delete-btn" class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+
+    <div id="keyboard" class="keyboard-container"></div>
+
+    <div id="status-bar">
+      <span id="status-text">Waiting for connection…</span>
+      <span id="connection-info"></span>
+    </div>
+  </div>
+
+  <input type="color" id="hidden-color-picker" value="#ff0000" style="display:none">
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# Redragon K629CGO-PRO-M — modo USB (wired)
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="0049", MODE="0660", GROUP="plugdev"
+
+# Redragon K629CGO-PRO-M — modo 2.4GHz wireless (dongle Compx)
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="25a7", ATTRS{idProduct}=="fa70", MODE="0660", GROUP="plugdev"

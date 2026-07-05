@@ -13,25 +13,51 @@ Software para controle do teclado mecânico **Redragon K629CGO-PRO-M** (tri-mode
 
 ## Arquitetura
 
+Documentação completa dos padrões de projeto, camadas e como estender o código:
+**[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**
+
 ```
 src/
-├── color.ts              # RGBColor — value object
-├── layout.ts             # KeyLayout — matriz 16×6, 87 teclas TKL
-├── effect.ts             # IEffect — interface Strategy para efeitos
-├── effects/              # Implementações de efeitos
-│   ├── static.ts         #   Cor fixa
-│   ├── rainbow.ts        #   Arco-íris HSV
-│   ├── wave.ts           #   Onda senoidal
-│   └── index.ts          #   Registry
-├── device.ts             # DeviceManager — USB HID (node-hid)
-├── protocol.ts           # FrameBuilder — frames 382B per-key + bursts firmware
+├── ports/                # Interfaces (Hexagonal / DIP)
+│   ├── idevice.ts        #   Port USB HID
+│   └── iprofile-repository.ts
+├── commands/             # Command — ações WebSocket
+│   ├── keyboard.commands.ts
+│   └── registry.ts
+├── observer/             # Observer — eventos do servidor
+│   └── server-events.ts
+├── effects/
+│   ├── dispatcher.ts     # Strategy — firmware vs host
+│   ├── registry.ts         # Registry — catálogo de efeitos
+│   └── …
+├── infrastructure/
+│   └── profile-store.ts  # Repository — persistência de perfis
+├── factory/
+│   └── app-factory.ts    # Factory — composição da aplicação
+├── patterns/
+│   └── firmware-burst.ts # Template Method — burst firmware
 ├── controller.ts         # Facade — orquestra device + protocol + effects
-├── runner.ts             # EffectRunner — loop de animação host-driven
+├── device.ts             # Adapter — IDevice via node-hid
+├── protocol.ts           # FrameBuilder — frames 382B per-key + bursts firmware
 ├── server.ts             # UIServer — Express + WebSocket
-├── cli.ts                # CLI — Commander
-├── start-server.ts       # Entry point do servidor web
-└── index.ts              # Barrel exports
+└── …
 ```
+
+### Padrões de projeto
+
+| Padrão | Onde | Função |
+|---|---|---|
+| **Facade** | `Controller` | API única para CLI, servidor e runner |
+| **Strategy** | `IEffect`, `IEffectStrategy` | Efeitos host-driven e firmware intercambiáveis |
+| **Command** | `commands/` | Cada mensagem WebSocket vira um comando testável |
+| **Observer** | `observer/server-events.ts` | Comandos emitem eventos; servidor despacha para clientes |
+| **Repository** | `FileProfileRepository` | Persistência de perfis desacoplada do servidor |
+| **Registry** | `effects/registry.ts` | Catálogo extensível de efeitos host-driven |
+| **Adapter** | `DeviceManager` | Implementa `IDevice` sobre node-hid |
+| **Ports & Adapters** | `ports/` | Controller e comandos dependem de abstrações |
+| **Template Method** | `patterns/firmware-burst.ts` | Algoritmo fixo de burst firmware; subclasses definem frames |
+| **Factory** | `factory/app-factory.ts` | Monta Controller + UIServer + dependências |
+| **Decorator** | `decorators/logging-device.ts` | Logging transparente de chamadas USB HID via `IDevice` |
 
 ## Pré-requisitos
 
@@ -42,8 +68,8 @@ src/
 ## Instalação
 
 ```bash
-git clone <url> teclado-redragon
-cd teclado-redragon
+git clone git@github.com:cauanboss/redragon-k629-controller.git
+cd redragon-k629-controller
 pnpm install
 
 # Permissão USB (necessário uma vez)
@@ -105,6 +131,8 @@ pnpm start          # node dist/start-server.js
 pnpm cli color ff0000   # CLI compilada
 ```
 
+Variáveis de ambiente opcionais: `PORT` (padrão 3000), `HOST` (padrão 127.0.0.1).
+
 ## Comandos de desenvolvimento
 
 | Comando | Descrição |
@@ -113,7 +141,7 @@ pnpm cli color ff0000   # CLI compilada
 | `pnpm dev:server` | Idem |
 | `pnpm dev:cli` | CLI (tsx) |
 | `pnpm build` | Compila TypeScript para dist/ |
-| `pnpm test` | Roda 110 testes unitários |
+| `pnpm test` | Roda 122 testes unitários |
 | `pnpm test:watch` | Testes em watch mode |
 
 ## Protocolo
@@ -161,6 +189,13 @@ Burst de **5 feature reports** (cada 1032 bytes):
 | `No matching version found` | Versão do @types errada | Rodar `pnpm install --no-frozen-lockfile` |
 | Module not found | Build desatualizado | `pnpm build` |
 | Teclado não acende | Modo wireless sem dongle | Conectar via USB ou parear o dongle 25a7:fa70 |
+
+## Documentação
+
+| Documento | Conteúdo |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Padrões de projeto, camadas, como estender |
+| [docs/CHANGELOG.md](docs/CHANGELOG.md) | Histórico das mudanças arquiteturais |
 
 ## Licença
 

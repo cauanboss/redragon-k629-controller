@@ -1,0 +1,20 @@
+<div class="keyboard-container">
+  <div class="keyboard-row" *ngFor="let row of layout; trackBy: trackByIndex; let i = index">
+    <ng-container *ngFor="let item of row.keys; trackBy: trackByKeyId">
+      <div *ngIf="item === null" class="key-gap"></div>
+      <div
+        *ngIf="item !== null"
+        class="key"
+        [class.key-selected]="isKeySelected(item.id)"
+        [class.has-color]="keyColors.has(item.id)"
+        [style.width.px]="item.width * KEY_UNIT"
+        [style.height.px]="KEY_HEIGHT"
+        [style.background-color]="getKeyColor(item.id) || undefined"
+        [title]="item.label"
+        (click)="onKeyClick(item.id, $event)"
+      >
+        <span class="key-label">{{ item.label }}</span>
+      </div>
+    </ng-container>
+  </div>
+</div>

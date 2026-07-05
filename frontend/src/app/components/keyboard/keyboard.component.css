@@ -1,0 +1,110 @@
+:host {
+  width: 100%;
+}
+
+.keyboard-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--key-gap);
+  padding: 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-key);
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+.keyboard-row {
+  display: flex;
+  gap: var(--key-gap);
+  justify-content: center;
+  min-height: var(--key-height);
+}
+
+.key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--key-height);
+  background: var(--bg-key);
+  border: 1px solid var(--border-key);
+  border-radius: var(--key-radius);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.12s ease;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.key::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--key-radius);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.key .key-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  line-height: 1;
+}
+
+.key:hover {
+  background: var(--bg-key-hover);
+  border-color: var(--border-key-hover);
+  box-shadow: 0 0 12px var(--accent-glow);
+  transform: translateY(-1px);
+  z-index: 2;
+}
+
+.key:active {
+  transform: translateY(0px) scale(0.97);
+}
+
+.key.has-color {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.key.has-color .key-label {
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 6px rgba(0, 0, 0, 0.4);
+}
+
+.key-selected {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: -2px;
+  box-shadow: 0 0 12px var(--accent-glow), inset 0 0 12px rgba(0, 212, 255, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+.key-gap {
+  width: 18px;
+  flex-shrink: 0;
+}
+
+.keyboard-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.keyboard-container::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 3px;
+}
+
+.keyboard-container::-webkit-scrollbar-thumb {
+  background: var(--bg-key);
+  border-radius: 3px;
+}
+
+.keyboard-container::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-key-hover);
+}

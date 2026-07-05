@@ -1,0 +1,67 @@
+:host {
+  width: 100%;
+}
+
+#status-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-key);
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#status-text {
+  color: var(--text-secondary);
+}
+
+#connection-info {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.badge-connected {
+  background: rgba(0, 200, 100, 0.15);
+  color: #00cc66;
+  border: 1px solid rgba(0, 200, 100, 0.3);
+}
+
+.badge-disconnected {
+  background: rgba(255, 68, 102, 0.12);
+  color: var(--danger);
+  border: 1px solid rgba(255, 68, 102, 0.25);
+}
+
+.badge-connecting {
+  background: rgba(255, 200, 0, 0.12);
+  color: #ffcc00;
+  border: 1px solid rgba(255, 200, 0, 0.25);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

@@ -1,0 +1,31 @@
+<div id="toolbar2">
+  <div class="toolbar-group">
+    <span class="group-label">Profiles</span>
+    <select
+      class="profile-select"
+      [(ngModel)]="selectedProfile"
+      (change)="onProfileChange()"
+    >
+      <option value="">-- Select Profile --</option>
+      <option *ngFor="let profile of profiles" [value]="profile.name">
+        {{ profile.builtin ? '🔒 ' : '' }}{{ profile.name }}
+      </option>
+    </select>
+    <button class="btn" (click)="onLoad()">Load</button>
+    <input
+      type="text"
+      class="profile-name-input"
+      [(ngModel)]="profileName"
+      placeholder="Profile name..."
+    />
+    <button class="btn btn-selected" (click)="onSave()">Save</button>
+    <button
+      class="btn btn-danger"
+      (click)="onDelete()"
+      [disabled]="isBuiltinSelected"
+      [title]="isBuiltinSelected ? 'Built-in profiles cannot be deleted' : 'Delete selected profile'"
+    >
+      Delete
+    </button>
+  </div>
+</div>

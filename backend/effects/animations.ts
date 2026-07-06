@@ -7,7 +7,7 @@ import { KeyLayout } from '../layout.js';
 const BLACK: RGBColor = { r: 0, g: 0, b: 0 };
 
 function hueColor(hueDeg: number, saturation = 1, lightness = 0.5): RGBColor {
-  const h = ((hueDeg % 360) + 360) % 360 / 360;
+  const h = (((hueDeg % 360) + 360) % 360) / 360;
   return hslToRgb(h, saturation, lightness);
 }
 

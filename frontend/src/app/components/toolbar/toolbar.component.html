@@ -45,11 +45,7 @@
 
   <div class="toolbar-group">
     <button class="btn" (click)="onApplyColor()">Apply Color</button>
-    <input
-      type="color"
-      class="color-swatch"
-      [(ngModel)]="colorPickerValue"
-    />
+    <input type="color" class="color-swatch" [(ngModel)]="colorPickerValue" />
     <button
       class="btn btn-selected"
       (click)="onApplyToSelected()"
@@ -58,12 +54,8 @@
       Apply to Selected
     </button>
     <button class="btn" (click)="onClearSelection()">Clear Sel</button>
-    <button class="btn" (click)="onStopEffect()" [disabled]="!currentEffect">
-      Stop Effect
-    </button>
-    <span class="selection-info" *ngIf="selectedKeyCount > 0">
-      {{ selectedKeyCount }} key(s)
-    </span>
+    <button class="btn" (click)="onStopEffect()" [disabled]="!currentEffect">Stop Effect</button>
+    <span class="selection-info" *ngIf="selectedKeyCount > 0"> {{ selectedKeyCount }} key(s) </span>
     <button class="btn btn-danger" (click)="onReset()">Reset</button>
   </div>
 </div>

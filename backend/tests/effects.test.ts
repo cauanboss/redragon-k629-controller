@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { StaticEffect } from '../effects/static.js';
 import { RainbowEffect } from '../effects/rainbow.js';
 import { WaveEffect } from '../effects/wave.js';
@@ -92,11 +92,8 @@ describe('WaveEffect', () => {
 
   it('returns different colors for different columns at the same step', () => {
     // At step=0: col 0 gives brightness 0 (sin(0)=0), col 1 gives non-zero
-    const col0 = layout.getKeyById('esc')!;   // LED idx 0, col 0
-    const col1 = layout.getKeyById('f1')!;    // LED idx 6, col 0... need different col
-    // Actually let's just verify the wave behavior directly
-    const keyA = layout.keys.find(k => k.position.col === 0)!;
-    const keyB = layout.keys.find(k => k.position.col === 1)!;
+    const keyA = layout.keys.find((k) => k.position.col === 0)!;
+    const keyB = layout.keys.find((k) => k.position.col === 1)!;
     const color0 = effect.getColorAt(keyA, 0, 0);
     const color1 = effect.getColorAt(keyB, 0, 0);
     // col 0 should have brightness sin(0*π/6)=0 → black
@@ -107,7 +104,7 @@ describe('WaveEffect', () => {
 
   it('returns different colors at different steps for the same key', () => {
     // At col 0: step 0 gives brightness 0, step 1 gives brightness sin(π/6)=0.5
-    const key = layout.keys.find(k => k.position.col === 0)!;
+    const key = layout.keys.find((k) => k.position.col === 0)!;
     const c1 = effect.getColorAt(key, 0, 0);
     const c2 = effect.getColorAt(key, 1, 0);
     expect(c1).toEqual({ r: 0, g: 0, b: 0 });

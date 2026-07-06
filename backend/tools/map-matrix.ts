@@ -15,7 +15,9 @@ import { DeviceManager } from '../device.js';
 const dev = new DeviceManager();
 if (!dev.find()) {
   console.error('Keyboard not found or permission denied. Is it connected?');
-  console.error('Try: sudo cp config/99-redragon.rules /etc/udev/rules.d/ && sudo udevadm control --reload-rules');
+  console.error(
+    'Try: sudo cp config/99-redragon.rules /etc/udev/rules.d/ && sudo udevadm control --reload-rules'
+  );
   process.exit(1);
 }
 try {
@@ -26,14 +28,15 @@ try {
 }
 
 function delay(ms: number) {
-  return new Promise(r => setTimeout(r, ms));
+  return new Promise((r) => setTimeout(r, ms));
 }
 
-function buildFrame(
-  colorFn: (row: number, col: number) => [number, number, number]
-): Buffer {
+function buildFrame(colorFn: (row: number, col: number) => [number, number, number]): Buffer {
   const frame = Buffer.alloc(382, 0);
-  frame[0] = 0x08; frame[1] = 0x0a; frame[2] = 0x7a; frame[3] = 0x01;
+  frame[0] = 0x08;
+  frame[1] = 0x0a;
+  frame[2] = 0x7a;
+  frame[3] = 0x01;
   for (let r = 0; r < 16; r++) {
     for (let c = 0; c < 6; c++) {
       const [red, grn, blu] = colorFn(r, c);
@@ -61,12 +64,12 @@ async function rowSweep() {
     const frame = buildFrame((r, c) => {
       if (r !== row) return [0, 0, 0];
       const colors: [number, number, number][] = [
-        [255, 0, 0],    // Red
-        [0, 255, 0],    // Green
-        [0, 0, 255],    // Blue
-        [255, 255, 0],  // Yellow
-        [0, 255, 255],  // Cyan
-        [255, 0, 255],  // Magenta
+        [255, 0, 0], // Red
+        [0, 255, 0], // Green
+        [0, 0, 255], // Blue
+        [255, 255, 0], // Yellow
+        [0, 255, 255], // Cyan
+        [255, 0, 255], // Magenta
       ];
       return colors[c] ?? [255, 255, 255];
     });
@@ -110,10 +113,13 @@ async function flashAll() {
 async function main() {
   const action = process.argv[2] || 'all';
 
-  if (action === 'row') { await rowSweep(); }
-  else if (action === 'col') { await colSweep(); }
-  else if (action === 'flash') { await flashAll(); }
-  else {
+  if (action === 'row') {
+    await rowSweep();
+  } else if (action === 'col') {
+    await colSweep();
+  } else if (action === 'flash') {
+    await flashAll();
+  } else {
     await flashAll();
     await rowSweep();
     await colSweep();
@@ -123,4 +129,7 @@ async function main() {
   console.log('\nDone!');
 }
 
-main().catch(e => { console.error(e); dev.close(); });
+main().catch((e) => {
+  console.error(e);
+  dev.close();
+});

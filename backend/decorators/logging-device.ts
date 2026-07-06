@@ -18,7 +18,7 @@ import type { IDevice } from '../ports/idevice.js';
 export class LoggingDeviceDecorator implements IDevice {
   constructor(
     private readonly inner: IDevice,
-    private readonly logger: (msg: string) => void = console.log,
+    private readonly logger: (msg: string) => void = console.log
   ) {}
 
   find(): boolean {
@@ -44,7 +44,7 @@ export class LoggingDeviceDecorator implements IDevice {
 
   sendFeatureReport(data: Buffer): void {
     this.logger(
-      `[Device] sendFeatureReport | ${data.length}B | header: ${data.subarray(0, 8).toString('hex')}`,
+      `[Device] sendFeatureReport | ${data.length}B | header: ${data.subarray(0, 8).toString('hex')}`
     );
     this.inner.sendFeatureReport(data);
   }

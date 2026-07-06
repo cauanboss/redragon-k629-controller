@@ -27,16 +27,29 @@ const COLORS: Record<string, [number, number, number]> = {
 const [r, g, b] = COLORS[colorName] || COLORS.red;
 
 const dev = new DeviceManager();
-if (!dev.find()) { console.error('Keyboard not found.'); process.exit(1); }
-try { dev.open(); } catch { console.error('Permission denied.'); process.exit(1); }
+if (!dev.find()) {
+  console.error('Keyboard not found.');
+  process.exit(1);
+}
+try {
+  dev.open();
+} catch {
+  console.error('Permission denied.');
+  process.exit(1);
+}
 
 // Fill only the target row with color, rest black
 const buf = Buffer.alloc(382, 0);
-buf[0] = 0x08; buf[1] = 0x0a; buf[2] = 0x7a; buf[3] = 0x01;
+buf[0] = 0x08;
+buf[1] = 0x0a;
+buf[2] = 0x7a;
+buf[3] = 0x01;
 
 for (let col = 0; col < 6; col++) {
   const off = 4 + (row * 6 + col) * 3;
-  buf[off] = r; buf[off + 1] = g; buf[off + 2] = b;
+  buf[off] = r;
+  buf[off + 1] = g;
+  buf[off + 2] = b;
 }
 
 dev.sendFeatureReport(buf);

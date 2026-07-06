@@ -136,7 +136,7 @@
   gap: 8px;
 }
 
-.slider-container input[type="range"] {
+.slider-container input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   width: 80px;
@@ -147,7 +147,7 @@
   transition: background 0.2s;
 }
 
-.slider-container input[type="range"]::-webkit-slider-thumb {
+.slider-container input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 16px;
@@ -160,11 +160,11 @@
   transition: transform 0.15s;
 }
 
-.slider-container input[type="range"]::-webkit-slider-thumb:hover {
+.slider-container input[type='range']::-webkit-slider-thumb:hover {
   transform: scale(1.15);
 }
 
-.slider-container input[type="range"]::-moz-range-thumb {
+.slider-container input[type='range']::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;

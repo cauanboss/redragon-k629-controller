@@ -46,15 +46,9 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subs.push(
-      this.state.brightness$.subscribe((b) => (this.brightness = b))
-    );
-    this.subs.push(
-      this.state.speed$.subscribe((s) => (this.speed = s))
-    );
-    this.subs.push(
-      this.state.currentEffect$.subscribe((e) => (this.currentEffect = e))
-    );
+    this.subs.push(this.state.brightness$.subscribe((b) => (this.brightness = b)));
+    this.subs.push(this.state.speed$.subscribe((s) => (this.speed = s)));
+    this.subs.push(this.state.currentEffect$.subscribe((e) => (this.currentEffect = e)));
     this.subs.push(
       this.state.selectedKeys$.subscribe((keys) => (this.selectedKeyCount = keys.size))
     );
@@ -67,8 +61,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   onEffectClick(effectId: string): void {
-    const brightness = Math.round(this.brightness * 4 / 10);
-    const speed = Math.round(this.speed * 4 / 10);
+    const brightness = Math.round((this.brightness * 4) / 10);
+    const speed = Math.round((this.speed * 4) / 10);
     this.ws.sendMessage({
       type: 'apply_effect',
       effect: effectId,
@@ -77,7 +71,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   onBrightnessChange(): void {
-    const firmwareLevel = Math.round(this.brightness * 4 / 10);
+    const firmwareLevel = Math.round((this.brightness * 4) / 10);
     this.ws.sendMessage({ type: 'set_brightness', level: firmwareLevel });
     // Sync brightness to state so scaleByBrightness() uses the current value
     this.state.brightness$.next(this.brightness);
@@ -85,7 +79,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   onSpeedChange(): void {
-    const firmwareLevel = Math.round(this.speed * 4 / 10);
+    const firmwareLevel = Math.round((this.speed * 4) / 10);
     this.ws.sendMessage({ type: 'set_speed', level: firmwareLevel });
   }
 

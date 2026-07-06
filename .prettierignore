@@ -1,0 +1,8 @@
+dist/
+bundle/
+node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/src-tauri/target/
+pnpm-lock.yaml
+*.md

@@ -2,6 +2,15 @@
 
 Registro das mudanças arquiteturais e operacionais do projeto.
 
+## Unreleased
+
+### Developer experience
+- ESLint + Prettier + Husky (pre-commit with lint-staged)
+- `GET /health` endpoint on UIServer
+- CI: lint + format check + tests + build
+- Removed `frontend/.angular/` cache from Git tracking
+- Fixed ESLint issues across backend (error causes, unused vars, type safety)
+
 ## 1.0.0 (2026-01-05)
 
 ### 🏗 Architecture

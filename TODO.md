@@ -72,21 +72,35 @@ Depois que o Tauri buildar, empacotar em Flatpak com permissão USB.
 
 ---
 
-## 🟡 Melhorias opcionais (não bloqueiam)
+## 🟡 Próximos passos
 
-Ver também [docs/PRODUCTION-READINESS.md](docs/PRODUCTION-READINESS.md) (roadmap release + UX).
+Roadmap completo: **[docs/NEXT-STEPS.md](docs/NEXT-STEPS.md)**
 
-- [x] Bundle backend Tauri (`scripts/bundle-backend.sh` + `node_modules` no resource)
-- [ ] Binário Node standalone (sidecar) — elimina dependência de Node no PATH
-- [x] Script instalação udev (`scripts/install-udev.sh` + banner no app)
-- [x] UX mínima v1.0 (pt-BR, status USB, parar efeito, toolbar scroll)
-- [ ] ESLint + Prettier + Husky
-- [x] CI/CD (GitHub Actions — test + build + bundle)
+### Fase 1 — Release v1.0
+- [ ] Testar `.deb` em máquina limpa
+- [ ] Binário Node standalone (sidecar Tauri)
+- [ ] `postinst` udev no `.deb`
+- [ ] Single instance Tauri
+- [ ] `tauri:build` na CI
+- [ ] Release GitHub v1.0
+
+### Qualidade de código ✅
+- [x] ESLint + Prettier + Husky (pre-commit)
+- [x] `GET /health`
+- [x] CI: lint + format + test + build
+- [x] Cache Angular removido do Git
+
+### Fase 2 — Produto (opcional)
+- [ ] Detectar deps Audio Viz / Type FX na UI
+- [ ] Integrar `.desktop` no bundle Tauri
+- [ ] AppImage (`linuxdeploy`)
 - [ ] Logging estruturado (pino)
-- [ ] Endpoint `/health` no backend
-- [ ] systemd service (`redragon-controller.service`)
-- [x] Desktop entry (`packaging/redragon-controller.desktop` — integrar no bundle Tauri)
-- [ ] i18n (pt-BR + en)
+
+### Fase 3 — Futuro
+- [ ] Flatpak
+- [ ] systemd service
+- [ ] Auto-update Tauri
+- [ ] i18n (en + pt-BR)
 
 ---
 

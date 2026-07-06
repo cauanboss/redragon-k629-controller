@@ -91,9 +91,7 @@ describe('DeviceManager', () => {
     });
 
     it('returns false when device has no path', () => {
-      const mockDevices = [
-        { vendorId: 0x258a, productId: 0x0049, usagePage: 0xff00, path: null },
-      ];
+      const mockDevices = [{ vendorId: 0x258a, productId: 0x0049, usagePage: 0xff00, path: null }];
       (HID.devices as ReturnType<typeof vi.fn>).mockReturnValue(mockDevices);
 
       const result = deviceManager.find();
@@ -149,16 +147,12 @@ describe('DeviceManager', () => {
       const buf = Buffer.from([0x08, 0x0a]);
       deviceManager.sendFeatureReport(buf);
 
-      // We need to get the mock sendFeatureReport from the HID instance
-      // Since the HID constructor creates a new instance, we can check
-      // that the method was called. The mock is shared.
-      const MockHID = HID.HID as unknown as { mock: { instances: any[] } };
-      expect(true).toBe(true); // If no throw, it's fine
+      // If no throw, send succeeded.
+      expect(true).toBe(true);
     });
 
     it('throws when device is not open', () => {
-      expect(() => deviceManager.sendFeatureReport(Buffer.from([0])))
-        .toThrow('Device is not open');
+      expect(() => deviceManager.sendFeatureReport(Buffer.from([0]))).toThrow('Device is not open');
     });
   });
 

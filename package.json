@@ -20,7 +20,12 @@
     "tauri:build": "pnpm --filter redragon-frontend tauri:build",
     "tauri:icon": "pnpm --filter redragon-frontend tauri:icon",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "lint": "eslint backend frontend/src",
+    "lint:fix": "eslint backend frontend/src --fix",
+    "format": "prettier --write \"backend/**/*.ts\" \"frontend/src/**/*.{ts,html,css}\"",
+    "format:check": "prettier --check \"backend/**/*.ts\" \"frontend/src/**/*.{ts,html,css}\"",
+    "prepare": "husky"
   },
   "dependencies": {
     "chalk": "^5.4.0",
@@ -30,13 +35,30 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.0",
     "@types/node": "^22.0.0",
     "@types/node-hid": "^3.0.0",
     "@types/ws": "^8.5.0",
     "concurrently": "^9.0.0",
-    "typescript": "^5.8.0",
+    "eslint": "^10.6.0",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
+    "prettier": "^3.9.4",
     "tsx": "^4.19.0",
+    "typescript": "^5.8.0",
+    "typescript-eslint": "^8.62.1",
     "vitest": "^3.1.0"
+  },
+  "lint-staged": {
+    "backend/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "frontend/src/**/*.{ts,html,css}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

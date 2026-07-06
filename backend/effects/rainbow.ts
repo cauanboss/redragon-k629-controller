@@ -21,13 +21,20 @@ export class RainbowEffect implements IEffect {
     const scale = (x: number): number => Math.round(Math.max(0, Math.min(255, x * 255)));
 
     switch (region) {
-      case 0: return { r: scale(v), g: scale(t), b: scale(p) };
-      case 1: return { r: scale(q), g: scale(v), b: scale(p) };
-      case 2: return { r: scale(p), g: scale(v), b: scale(t) };
-      case 3: return { r: scale(p), g: scale(q), b: scale(v) };
-      case 4: return { r: scale(t), g: scale(p), b: scale(v) };
-      case 5: return { r: scale(v), g: scale(p), b: scale(q) };
-      default: return { r: 0, g: 0, b: 0 };
+      case 0:
+        return { r: scale(v), g: scale(t), b: scale(p) };
+      case 1:
+        return { r: scale(q), g: scale(v), b: scale(p) };
+      case 2:
+        return { r: scale(p), g: scale(v), b: scale(t) };
+      case 3:
+        return { r: scale(p), g: scale(q), b: scale(v) };
+      case 4:
+        return { r: scale(t), g: scale(p), b: scale(v) };
+      case 5:
+        return { r: scale(v), g: scale(p), b: scale(q) };
+      default:
+        return { r: 0, g: 0, b: 0 };
     }
   }
 }

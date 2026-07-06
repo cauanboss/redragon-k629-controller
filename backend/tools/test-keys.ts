@@ -6,29 +6,45 @@ import { DeviceManager } from '../device.js';
 
 const dev = new DeviceManager();
 if (!dev.find()) process.exit(1);
-try { dev.open(); } catch { process.exit(1); }
+try {
+  dev.open();
+} catch {
+  process.exit(1);
+}
 
-function send(buf: Buffer) { dev.sendFeatureReport(buf); }
+function send(buf: Buffer) {
+  dev.sendFeatureReport(buf);
+}
 
 function allColor(r: number, g: number, b: number) {
   const buf = Buffer.alloc(382, 0);
-  buf[0] = 0x08; buf[1] = 0x0a; buf[2] = 0x7a; buf[3] = 0x01;
+  buf[0] = 0x08;
+  buf[1] = 0x0a;
+  buf[2] = 0x7a;
+  buf[3] = 0x01;
   // Preenche TODAS as 96 posições com a mesma cor
   for (let off = 4; off < 4 + 96 * 3; off += 3) {
-    buf[off] = r; buf[off + 1] = g; buf[off + 2] = b;
+    buf[off] = r;
+    buf[off + 1] = g;
+    buf[off + 2] = b;
   }
   return buf;
 }
 
 function oneColor(row: number, col: number, r: number, g: number, b: number) {
   const buf = Buffer.alloc(382, 0);
-  buf[0] = 0x08; buf[1] = 0x0a; buf[2] = 0x7a; buf[3] = 0x01;
+  buf[0] = 0x08;
+  buf[1] = 0x0a;
+  buf[2] = 0x7a;
+  buf[3] = 0x01;
   const off = 4 + (row * 6 + col) * 3;
-  buf[off] = r; buf[off + 1] = g; buf[off + 2] = b;
+  buf[off] = r;
+  buf[off + 1] = g;
+  buf[off + 2] = b;
   return buf;
 }
 
-const delay = (ms: number) => new Promise(r => setTimeout(r, ms));
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function main() {
   // 1. Todas as teclas BRANCAS
@@ -80,4 +96,7 @@ async function main() {
   dev.close();
 }
 
-main().catch(e => { console.error(e); dev.close(); });
+main().catch((e) => {
+  console.error(e);
+  dev.close();
+});

@@ -14,16 +14,23 @@ if (!dev.find()) {
   console.error('Keyboard not found.');
   process.exit(1);
 }
-try { dev.open(); } catch {
+try {
+  dev.open();
+} catch {
   console.error('Permission denied. Install udev rules first.');
   process.exit(1);
 }
 
 function sendFrame(row: number, col: number) {
   const buf = Buffer.alloc(382, 0);
-  buf[0] = 0x08; buf[1] = 0x0a; buf[2] = 0x7a; buf[3] = 0x01;
+  buf[0] = 0x08;
+  buf[1] = 0x0a;
+  buf[2] = 0x7a;
+  buf[3] = 0x01;
   const off = 4 + (row * 6 + col) * 3;
-  buf[off] = 255; buf[off + 1] = 0; buf[off + 2] = 0;
+  buf[off] = 255;
+  buf[off + 1] = 0;
+  buf[off + 2] = 0;
   dev.sendFeatureReport(buf);
 }
 
@@ -50,7 +57,7 @@ async function identify() {
     for (let col = 0; col < 6; col++) {
       sendFrame(row, col);
 
-      const label = await new Promise<string>(resolve => {
+      const label = await new Promise<string>((resolve) => {
         const timeout = setTimeout(() => {
           resolve('');
         }, 8000);
@@ -63,7 +70,7 @@ async function identify() {
 
       results.push({ row, col, label: label || '(null)' });
       allOff();
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 300));
     }
   }
 
@@ -72,7 +79,9 @@ async function identify() {
   console.log('private static KEY_DEFS: [number, number, RawKeyDef][] = [');
   for (const r of results) {
     if (r.label && r.label !== '(null)') {
-      console.log(`  [${r.row}, ${r.col}, { id: '${r.label.toLowerCase()}', label: '${r.label}' }],`);
+      console.log(
+        `  [${r.row}, ${r.col}, { id: '${r.label.toLowerCase()}', label: '${r.label}' }],`
+      );
     }
   }
   console.log('];\n');
@@ -88,4 +97,8 @@ async function identify() {
   dev.close();
 }
 
-identify().catch(e => { console.error(e); dev.close(); process.exit(1); });
+identify().catch((e) => {
+  console.error(e);
+  dev.close();
+  process.exit(1);
+});

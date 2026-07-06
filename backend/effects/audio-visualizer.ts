@@ -11,8 +11,12 @@ const EMA_ALPHA = 0.3;
 
 // Logarithmic bin groups per column (skip bin 0 = DC)
 const COLUMN_BIN_RANGES: [number, number][] = [
-  [1, 3],    [4, 7],    [8, 15],
-  [16, 31],  [32, 63],  [64, 127],
+  [1, 3],
+  [4, 7],
+  [8, 15],
+  [16, 31],
+  [32, 63],
+  [64, 127],
 ];
 
 class SpectrumData {
@@ -36,7 +40,8 @@ class SpectrumData {
 
 export class AudioVisualizerEffect implements IEffect, IEffectLifecycle {
   readonly name = 'audio-visualizer';
-  readonly description = 'Music visualizer — frequency bars on keyboard columns reacting to system audio';
+  readonly description =
+    'Music visualizer — frequency bars on keyboard columns reacting to system audio';
 
   private capture: AudioCapture | null = null;
   private spectrum = new SpectrumData();
@@ -57,8 +62,11 @@ export class AudioVisualizerEffect implements IEffect, IEffectLifecycle {
       this.spectrum.update(mag);
     });
 
-    this.capture.start()
-      .then(() => { this.available = true; })
+    this.capture
+      .start()
+      .then(() => {
+        this.available = true;
+      })
       .catch(() => {
         this.available = false;
       });

@@ -13,16 +13,15 @@ function findRedragonKeyboardPath(): string | null {
     return null;
   }
   const match = entries.find(
-    (e) => (e.includes('BY_Tech') || e.includes('Redragon'))
-           && e.endsWith('-event-kbd'),
+    (e) => (e.includes('BY_Tech') || e.includes('Redragon')) && e.endsWith('-event-kbd')
   );
   return match ? resolve(EVDEV_BY_ID, match) : null;
 }
 
 function parseEvent(buf: Buffer): { type: number; code: number; value: number } {
   return {
-    type:  buf.readUInt16LE(16),
-    code:  buf.readUInt16LE(18),
+    type: buf.readUInt16LE(16),
+    code: buf.readUInt16LE(18),
     value: buf.readInt32LE(20),
   };
 }
@@ -37,7 +36,7 @@ export class EvdevInputReader implements IInputReader {
     if (!path) {
       throw new Error(
         'Redragon keyboard input device not found. Ensure keyboard is connected ' +
-        'and you have input group permission. Try: sudo usermod -aG input $USER'
+          'and you have input group permission. Try: sudo usermod -aG input $USER'
       );
     }
 
@@ -45,7 +44,9 @@ export class EvdevInputReader implements IInputReader {
     this.stream.on('data', (chunk: string | Buffer) => {
       if (typeof chunk !== 'string') this.onData(chunk);
     });
-    this.stream.on('error', () => { /* ignore read errors */ });
+    this.stream.on('error', () => {
+      /* ignore read errors */
+    });
   }
 
   onKeyEvent(cb: KeyEventCallback): void {

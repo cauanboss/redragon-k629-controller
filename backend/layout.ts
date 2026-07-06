@@ -34,11 +34,11 @@ export class KeyLayout {
   }
 
   getKeyById(id: string): KeyInfo | undefined {
-    return this.keys.find(k => k.id === id);
+    return this.keys.find((k) => k.id === id);
   }
 
   toJSON(): KeyInfo[] {
-    return this.keys.map(k => ({ ...k, position: { ...k.position } }));
+    return this.keys.map((k) => ({ ...k, position: { ...k.position } }));
   }
 
   private static KEY_DEFS: [number, number, RawKeyDef][] = [
@@ -126,7 +126,7 @@ export class KeyLayout {
     [15, 2, { id: 'end', label: 'End' }],
     [15, 3, { id: 'pgup', label: 'PgUp' }],
     [15, 4, { id: 'pgdn', label: 'PgDn' }],
-    [15, 5, { id: 'right', label: 'Right' }]
+    [15, 5, { id: 'right', label: 'Right' }],
   ];
 
   private static NULL_CELLS: [number, number][] = [
@@ -140,12 +140,15 @@ export class KeyLayout {
     [13, 2],
     [14, 1],
     [14, 2],
-    [14, 3]
+    [14, 3],
   ];
 
   private buildKeys(): KeyInfo[] {
     return KeyLayout.KEY_DEFS.map(([row, col, def]) => ({
-      id: def.id, label: def.label, position: { row, col }, width: def.width,
+      id: def.id,
+      label: def.label,
+      position: { row, col },
+      width: def.width,
     }));
   }
 

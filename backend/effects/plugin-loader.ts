@@ -18,7 +18,7 @@ export async function loadPlugins(): Promise<void> {
     if (!entry.endsWith('.ts') && !entry.endsWith('.js')) continue;
 
     try {
-      const mod = await import(resolve(pluginsDir, entry));
+      const mod = (await import(resolve(pluginsDir, entry))) as Record<string, unknown>;
       for (const exported of Object.values(mod)) {
         if (isEffect(exported)) {
           registerEffect(exported);
@@ -32,7 +32,10 @@ export async function loadPlugins(): Promise<void> {
 }
 
 function isEffect(obj: unknown): obj is IEffect {
-  return typeof obj === 'object' && obj !== null
-    && typeof (obj as IEffect).name === 'string'
-    && typeof (obj as IEffect).getColorAt === 'function';
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof (obj as IEffect).name === 'string' &&
+    typeof (obj as IEffect).getColorAt === 'function'
+  );
 }

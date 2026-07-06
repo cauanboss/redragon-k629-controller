@@ -8,7 +8,7 @@ import type { IProfileRepository } from '../ports/iprofile-repository.js';
 
 function createContext(
   message: CommandContext['message'],
-  overrides: Partial<CommandContext> = {},
+  overrides: Partial<CommandContext> = {}
 ): CommandContext {
   const controller = {
     getLayout: () => ({
@@ -62,9 +62,7 @@ describe('CommandRegistry', () => {
   it('returns error for unknown message type', () => {
     const result = registry.dispatch(createContext({ type: 'invalid' }));
 
-    expect(result.events).toEqual([
-      { kind: 'error', message: 'Unknown message type: invalid' },
-    ]);
+    expect(result.events).toEqual([{ kind: 'error', message: 'Unknown message type: invalid' }]);
   });
 
   it('validates set_key_color payload', () => {

@@ -12,7 +12,7 @@ Este documento consolida o estado atual do **redragon-k629-controller**, o que f
 | App desktop (Tauri dev) | ✅ Validado | Não |
 | Build release (`.deb`/AppImage) | 🟡 Parcial — bundle + Node no PATH | **Sim** (Node ainda externo) |
 | Instalação USB (udev) | 🟡 Script `install-udev.sh` + banner no app | Parcial |
-| Interface (UX básica) | ✅ MVP v1.0 (pt-BR, parar efeito, status USB) | Não |
+| Interface (UX básica) | ✅ MVP (English UI, stop effect, status USB) | Não |
 | Interface (polish comercial) | 🟡 Parcial | Não |
 
 **Conclusão:** o software está **pronto para uso pessoal** e desenvolvimento. Para **produção** (outros usuários instalarem sem clonar o repo), o foco deve ser **empacotamento do backend** e **instalação automática das regras udev** — não redesign visual.
@@ -25,7 +25,7 @@ Este documento consolida o estado atual do **redragon-k629-controller**, o que f
 - Controle RGB per-key (85 teclas com LED na matriz física)
 - 11 efeitos **host-driven** (via frames USB a ~30 fps) — ver [FIRMWARE-EFFECTS.md](FIRMWARE-EFFECTS.md)
 - 8 perfis built-in com copy-on-write
-- Validação WebSocket, auto-reconnect USB, 178 testes
+- Validação WebSocket, auto-reconnect USB, 179 testes
 - Porta unificada **3000** (dev, Tauri, produção)
 
 ### Frontend (Angular)
@@ -99,11 +99,26 @@ Documentar na instalação ou detectar na UI e avisar quando indisponível.
 
 ---
 
+## Qualidade de código ✅
+
+| Item | Status |
+|------|--------|
+| ESLint + Prettier | ✅ `pnpm lint`, `pnpm format` |
+| Husky pre-commit | ✅ lint-staged em TS/HTML/CSS |
+| CI lint + format | ✅ GitHub Actions |
+| `GET /health` | ✅ JSON com status e device |
+| Cache Angular no Git | ✅ removido + `.gitignore` |
+| Testes | ✅ 179 passando |
+
+Ver roadmap completo em **[NEXT-STEPS.md](NEXT-STEPS.md)**.
+
+---
+
 ## Importante (qualidade de produto, não bloqueia MVP)
 
 | Item | Motivo |
 |------|--------|
-| **CI (GitHub Actions)** | ✅ `pnpm test` + `pnpm build` + `bundle:backend` — falta `tauri:build` na CI |
+| **CI (GitHub Actions)** | ✅ test + lint + format + build + bundle — falta `tauri:build` |
 | **Instalador `.deb` / AppImage** | Tauri gera; falta testar end-to-end e publicar releases |
 | **Desktop entry** (`.desktop`) | ✅ `packaging/redragon-controller.desktop` — falta integrar no bundle Tauri |
 | **Single instance** | Evitar duas instâncias disputando o dispositivo USB |
@@ -127,22 +142,16 @@ Documentar na instalação ou detectar na UI e avisar quando indisponível.
 
 ## Roadmap sugerido
 
-```mermaid
-flowchart LR
-  A[Validar tauri:build] --> B[Backend standalone no bundle]
-  B --> C[Script instalação udev]
-  C --> D[Teste máquina limpa]
-  D --> E[CI + release GitHub]
-  E --> F[Polish UX mínimo]
-  F --> G[Flatpak / extras]
-```
+Ver **[NEXT-STEPS.md](NEXT-STEPS.md)** para o roadmap reorganizado em fases.
 
-1. Rodar `pnpm tauri:build` e instalar o artefato numa máquina limpa
-2. Empacotar backend como binário sidecar (maior gap técnico)
-3. Post-install udev no `.deb` ou wizard de primeira execução
-4. CI com testes automáticos
-5. Release v1.0 no GitHub (`.deb` + AppImage)
-6. Polish de UX (seção abaixo) + Flatpak depois
+Resumo:
+
+1. Testar `.deb` em máquina limpa
+2. Backend standalone (sidecar Tauri)
+3. `postinst` udev no `.deb`
+4. Single instance + `tauri:build` na CI
+5. Release v1.0 no GitHub
+6. Polish de produto (deps de efeitos, `.desktop`, AppImage)
 
 ---
 
@@ -200,8 +209,10 @@ Estimativa: ~1–2 dias. **Não substituem** o trabalho de empacotamento do back
 
 ```markdown
 ### Técnico (obrigatório)
-- [x] `pnpm test` passando (178 testes)
-- [x] `pnpm tauri:build` gera `.deb` / `.rpm` (AppImage requer `linuxdeploy` — não incluído por padrão)
+- [x] `pnpm test` passando (179 testes)
+- [x] ESLint + Prettier + Husky
+- [x] `GET /health`
+- [x] `pnpm tauri:build` gera `.deb` / `.rpm`
 - [ ] App funciona em máquina limpa (sem repo clonado; Node ≥ 18 no PATH)
 - [x] Backend sobe automaticamente ao abrir o app (dev + release com Node)
 - [ ] Teclado acende e efeitos host-driven funcionam no artefato instalado
@@ -209,12 +220,12 @@ Estimativa: ~1–2 dias. **Não substituem** o trabalho de empacotamento do back
 
 ### UX (recomendado)
 - [x] Mensagem quando teclado não encontrado
-- [x] Labels principais em pt-BR
-- [x] Botão “Parar efeito”
+- [x] UI em inglês
+- [x] Botão “Stop Effect”
 - [x] Toolbar de efeitos reorganizada (scroll horizontal)
 
 ### Distribuição
-- [x] CI no GitHub (`test` + `build` + `bundle:backend`)
+- [x] CI no GitHub (test + lint + format + build + bundle)
 - [ ] Release notes + artefatos anexados
 - [ ] README de instalação para usuário final (Node + udev)
 ```
@@ -227,3 +238,4 @@ Estimativa: ~1–2 dias. **Não substituem** o trabalho de empacotamento do back
 - [FIRMWARE-EFFECTS.md](FIRMWARE-EFFECTS.md) — limitações de firmware no K629
 - [CHANGELOG.md](CHANGELOG.md) — histórico de mudanças
 - [../TODO.md](../TODO.md) — tarefas operacionais do dia a dia
+- [NEXT-STEPS.md](NEXT-STEPS.md) — roadmap por fases

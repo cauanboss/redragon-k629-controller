@@ -9,9 +9,9 @@ const BLACK: RGBColor = { r: 0, g: 0, b: 0 };
 const FADE_THRESHOLD = 0.02;
 
 export interface TypingReactiveOptions {
-  decayMs?: number;     // default 300ms
-  hue?: number;         // default 0 (red), 0-360
-  inputReader?: IInputReader;  // injectable for testing
+  decayMs?: number; // default 300ms
+  hue?: number; // default 0 (red), 0-360
+  inputReader?: IInputReader; // injectable for testing
 }
 
 export class TypingReactiveEffect implements IEffect, IEffectLifecycle {
@@ -27,9 +27,8 @@ export class TypingReactiveEffect implements IEffect, IEffectLifecycle {
 
   constructor(options: TypingReactiveOptions = {}) {
     this.decayMs = options.decayMs ?? 300;
-    this.pressedColor = options.hue != null
-      ? hueToRgb(options.hue, 1.0)
-      : { r: 255, g: 255, b: 255 };
+    this.pressedColor =
+      options.hue != null ? hueToRgb(options.hue, 1.0) : { r: 255, g: 255, b: 255 };
     this.inputReader = options.inputReader ?? new EvdevInputReader();
   }
 
@@ -42,7 +41,7 @@ export class TypingReactiveEffect implements IEffect, IEffectLifecycle {
     try {
       this.inputReader.start();
       this.available = true;
-    } catch (err) {
+    } catch {
       this.available = false;
     }
   }
@@ -57,7 +56,7 @@ export class TypingReactiveEffect implements IEffect, IEffectLifecycle {
       if (!this.warnedPermission) {
         console.warn(
           'Typing Reactive: input device unavailable. ' +
-          'Add your user to the input group: sudo usermod -aG input $USER'
+            'Add your user to the input group: sudo usermod -aG input $USER'
         );
         this.warnedPermission = true;
       }
@@ -113,11 +112,17 @@ export function hueToRgb(h: number, s: number): RGBColor {
   const scale = (x: number) => Math.round(Math.max(0, Math.min(255, x * 255)));
 
   switch (region) {
-    case 0: return { r: scale(v), g: scale(t), b: scale(p) };
-    case 1: return { r: scale(q), g: scale(v), b: scale(p) };
-    case 2: return { r: scale(p), g: scale(v), b: scale(t) };
-    case 3: return { r: scale(p), g: scale(q), b: scale(v) };
-    case 4: return { r: scale(t), g: scale(p), b: scale(v) };
-    default: return { r: scale(v), g: scale(p), b: scale(q) };
+    case 0:
+      return { r: scale(v), g: scale(t), b: scale(p) };
+    case 1:
+      return { r: scale(q), g: scale(v), b: scale(p) };
+    case 2:
+      return { r: scale(p), g: scale(v), b: scale(t) };
+    case 3:
+      return { r: scale(p), g: scale(q), b: scale(v) };
+    case 4:
+      return { r: scale(t), g: scale(p), b: scale(v) };
+    default:
+      return { r: scale(v), g: scale(p), b: scale(q) };
   }
 }

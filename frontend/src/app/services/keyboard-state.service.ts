@@ -21,9 +21,7 @@ export class KeyboardStateService implements OnDestroy {
   private subscriptions: Subscription[] = [];
 
   constructor(private ws: WebSocketService) {
-    this.subscriptions.push(
-      this.ws.messages$.subscribe((msg) => this.handleServerMessage(msg))
-    );
+    this.subscriptions.push(this.ws.messages$.subscribe((msg) => this.handleServerMessage(msg)));
   }
 
   ngOnDestroy(): void {

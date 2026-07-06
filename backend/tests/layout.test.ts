@@ -48,7 +48,7 @@ describe('KeyLayout', () => {
   });
 
   it('all keys have unique IDs', () => {
-    const ids = layout.keys.map(k => k.id);
+    const ids = layout.keys.map((k) => k.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
 });

@@ -19,8 +19,16 @@ if (!keyName) {
 }
 
 const dev = new DeviceManager();
-if (!dev.find()) { console.error('Keyboard not found.'); process.exit(1); }
-try { dev.open(); } catch { console.error('Permission denied.'); process.exit(1); }
+if (!dev.find()) {
+  console.error('Keyboard not found.');
+  process.exit(1);
+}
+try {
+  dev.open();
+} catch {
+  console.error('Permission denied.');
+  process.exit(1);
+}
 
 /**
  * Hardware LED matrix is 6 rows × 16 columns.
@@ -32,9 +40,14 @@ function sendFrame(layoutRow: number, layoutCol: number, r = 255, g = 0, b = 0) 
   const hwRow = layoutCol;
   const hwCol = layoutRow;
   const buf = Buffer.alloc(382, 0);
-  buf[0] = 0x08; buf[1] = 0x0a; buf[2] = 0x7a; buf[3] = 0x01;
+  buf[0] = 0x08;
+  buf[1] = 0x0a;
+  buf[2] = 0x7a;
+  buf[3] = 0x01;
   const off = 4 + (hwRow * 16 + hwCol) * 3;
-  buf[off] = r; buf[off + 1] = g; buf[off + 2] = b;
+  buf[off] = r;
+  buf[off + 1] = g;
+  buf[off + 2] = b;
   dev.sendFeatureReport(buf);
 }
 
@@ -51,9 +64,9 @@ async function main() {
     for (let col = 0; col < 6; col++) {
       process.stdout.write(`\rTestando (${row},${col})... `);
       sendFrame(row, col);
-      await new Promise(r => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 2000));
       allOff();
-      await new Promise(r => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200));
     }
   }
 
@@ -61,4 +74,8 @@ async function main() {
   dev.close();
 }
 
-main().catch(e => { console.error(e); dev.close(); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  dev.close();
+  process.exit(1);
+});

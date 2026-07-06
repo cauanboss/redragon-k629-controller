@@ -101,7 +101,9 @@ header h1::before {
   border-radius: 20px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  transition: background 0.3s, color 0.3s;
+  transition:
+    background 0.3s,
+    color 0.3s;
 }
 
 .badge-connected {
@@ -124,8 +126,13 @@ header h1::before {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* ── Toolbar ───────────────────────────────────────────── */
@@ -235,7 +242,9 @@ header h1::before {
 .key-selected {
   outline: 2px solid var(--accent) !important;
   outline-offset: -2px;
-  box-shadow: 0 0 12px var(--accent-glow), inset 0 0 12px rgba(0, 212, 255, 0.1) !important;
+  box-shadow:
+    0 0 12px var(--accent-glow),
+    inset 0 0 12px rgba(0, 212, 255, 0.1) !important;
   transform: translateY(-2px);
 }
 
@@ -288,7 +297,7 @@ header h1::before {
   gap: 8px;
 }
 
-.slider-container input[type="range"] {
+.slider-container input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   width: 80px;
@@ -299,7 +308,7 @@ header h1::before {
   transition: background 0.2s;
 }
 
-.slider-container input[type="range"]::-webkit-slider-thumb {
+.slider-container input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 16px;
@@ -312,11 +321,11 @@ header h1::before {
   transition: transform 0.15s;
 }
 
-.slider-container input[type="range"]::-webkit-slider-thumb:hover {
+.slider-container input[type='range']::-webkit-slider-thumb:hover {
   transform: scale(1.15);
 }
 
-.slider-container input[type="range"]::-moz-range-thumb {
+.slider-container input[type='range']::-moz-range-thumb {
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -402,7 +411,7 @@ header h1::before {
   position: absolute;
   inset: 0;
   border-radius: var(--key-radius);
-  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 50%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -414,7 +423,7 @@ header h1::before {
   pointer-events: none;
   position: relative;
   z-index: 1;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   line-height: 1;
 }
 
@@ -436,7 +445,9 @@ header h1::before {
 
 .key.has-color .key-label {
   color: #ffffff;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 6px rgba(0, 0, 0, 0.4);
+  text-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.8),
+    0 0 6px rgba(0, 0, 0, 0.4);
 }
 
 /* ── Gap spacer ───────────────────────────────────────── */
@@ -531,7 +542,7 @@ header h1::before {
     padding: 4px 10px;
   }
 
-  .slider-container input[type="range"] {
+  .slider-container input[type='range'] {
     width: 60px;
   }
 }

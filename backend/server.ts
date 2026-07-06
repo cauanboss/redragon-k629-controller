@@ -1,31 +1,17 @@
 import express from 'express';
 import http from 'http';
 import path from 'path';
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { WebSocketServer, WebSocket } from 'ws';
 import { Controller } from './controller.js';
 import type { IProfileRepository } from './ports/iprofile-repository.js';
-import {
-  defaultProfileRepository,
-} from './infrastructure/profile-store.js';
-import {
-  defaultEffectDispatcher,
-  type EffectDispatcher,
-} from './effects/dispatcher.js';
-import {
-  createDefaultCommands,
-} from './commands/keyboard.commands.js';
-import {
-  CommandRegistry,
-  createDefaultCommandRegistry,
-} from './commands/registry.js';
+import { defaultProfileRepository } from './infrastructure/profile-store.js';
+import { defaultEffectDispatcher, type EffectDispatcher } from './effects/dispatcher.js';
+import { createDefaultCommands } from './commands/keyboard.commands.js';
+import { CommandRegistry, createDefaultCommandRegistry } from './commands/registry.js';
 import type { WsMessage } from './commands/types.js';
-import {
-  Subject,
-  type IObserver,
-  type ServerEvent,
-} from './observer/server-events.js';
+import { Subject, type IObserver, type ServerEvent } from './observer/server-events.js';
 import { validateMessage } from './commands/validate.js';
 
 // ---------------------------------------------------------------
@@ -38,6 +24,25 @@ const DIR_ANGULAR = path.resolve(__dirname, '../dist/angular');
 
 const WEB_DIRS = [DIR_ANGULAR, DIR_HERE, DIR_DIST].filter((dir) => existsSync(dir));
 const WEB_DIR = WEB_DIRS[0] || DIR_HERE;
+
+function readAppVersion(): string {
+  const candidates = [
+    path.resolve(__dirname, '../../package.json'),
+    path.resolve(__dirname, '../package.json'),
+  ];
+  for (const file of candidates) {
+    if (!existsSync(file)) continue;
+    try {
+      const pkg = JSON.parse(readFileSync(file, 'utf8')) as { version?: string };
+      if (pkg.version) return pkg.version;
+    } catch {
+      // ignore malformed package.json
+    }
+  }
+  return '1.0.0';
+}
+
+const APP_VERSION = readAppVersion();
 
 /** Commands allowed when the keyboard USB device is not connected. */
 const OFFLINE_ALLOWED = new Set([
@@ -76,24 +81,28 @@ export class UIServer implements IObserver<ServerEvent> {
   private eventSubject = new Subject<ServerEvent>();
   private currentClient: WebSocket | null = null;
 
-  constructor(
-    controller: Controller,
-    portOrOptions: number | UIServerOptions = {},
-  ) {
+  constructor(controller: Controller, portOrOptions: number | UIServerOptions = {}) {
     this.controller = controller;
 
-    const options: UIServerOptions = typeof portOrOptions === 'number'
-      ? { port: portOrOptions }
-      : portOrOptions;
+    const options: UIServerOptions =
+      typeof portOrOptions === 'number' ? { port: portOrOptions } : portOrOptions;
 
     this.port = options.port ?? 3000;
     this.host = options.host ?? '127.0.0.1';
     this.profiles = options.profiles ?? defaultProfileRepository;
     this.effectDispatcher = options.effectDispatcher ?? defaultEffectDispatcher;
-    this.commandRegistry = options.commands
-      ?? createDefaultCommandRegistry(createDefaultCommands());
+    this.commandRegistry =
+      options.commands ?? createDefaultCommandRegistry(createDefaultCommands());
 
     this.app = express();
+    this.app.get('/health', (_req, res) => {
+      res.json({
+        status: 'ok',
+        version: APP_VERSION,
+        deviceConnected: this.controller.isConnected(),
+        deviceLabel: this.controller.getDeviceLabel(),
+      });
+    });
     for (const dir of WEB_DIRS) {
       this.app.use(express.static(dir));
     }
@@ -108,10 +117,7 @@ export class UIServer implements IObserver<ServerEvent> {
   }
 
   /** Backward-compatible factory for explicit options. */
-  static create(
-    controller: Controller,
-    portOrOptions: number | UIServerOptions = {},
-  ): UIServer {
+  static create(controller: Controller, portOrOptions: number | UIServerOptions = {}): UIServer {
     return new UIServer(controller, portOrOptions);
   }
 
@@ -215,7 +221,7 @@ export class UIServer implements IObserver<ServerEvent> {
       if (!this.controller.isConnected() && !OFFLINE_ALLOWED.has(message.type)) {
         this.eventSubject.notify({
           kind: 'error',
-          message: 'Teclado não conectado. Instale as regras udev e reconecte o USB.',
+          message: 'Keyboard not connected. Install udev rules and reconnect USB.',
         });
         return;
       }
@@ -242,11 +248,13 @@ export class UIServer implements IObserver<ServerEvent> {
   }
 
   private sendDeviceStatus(ws: WebSocket): void {
-    ws.send(JSON.stringify({
-      type: 'device_status',
-      connected: this.controller.isConnected(),
-      label: this.controller.getDeviceLabel(),
-    }));
+    ws.send(
+      JSON.stringify({
+        type: 'device_status',
+        connected: this.controller.isConnected(),
+        label: this.controller.getDeviceLabel(),
+      })
+    );
   }
 
   private send(ws: WebSocket, data: Record<string, unknown>): void {

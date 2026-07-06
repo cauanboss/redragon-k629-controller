@@ -71,8 +71,13 @@ interface ProfileDeletedMessage {
   name: string;
 }
 
-type ServerMessage = LayoutMessage | KeyColorMessage | EffectActiveMessage
-  | ProfileDataMessage | ProfileListMessage | ProfileSavedMessage
+type ServerMessage =
+  | LayoutMessage
+  | KeyColorMessage
+  | EffectActiveMessage
+  | ProfileDataMessage
+  | ProfileListMessage
+  | ProfileSavedMessage
   | ProfileDeletedMessage;
 
 // ── Constants ───────────────────────────────────────────────────
@@ -80,7 +85,6 @@ type ServerMessage = LayoutMessage | KeyColorMessage | EffectActiveMessage
 const WS_URL = 'ws://localhost:3000';
 const KEY_UNIT = 54;
 const KEY_HEIGHT = 40;
-const KEY_GAP = 4;
 const RECONNECT_DELAY_MS = 3000;
 const MAX_RECONNECT_DELAY_MS = 30000;
 const MAX_RECONNECT_ATTEMPTS = 10;
@@ -94,19 +98,23 @@ const LAYOUT: RowDef[] = [
   // Row 0 — Function keys + Del
   {
     keys: [
-      { id: 'esc', label: 'Esc', width: 1 }, null,
+      { id: 'esc', label: 'Esc', width: 1 },
+      null,
       { id: 'f1', label: 'F1', width: 1 },
       { id: 'f2', label: 'F2', width: 1 },
       { id: 'f3', label: 'F3', width: 1 },
-      { id: 'f4', label: 'F4', width: 1 }, null,
+      { id: 'f4', label: 'F4', width: 1 },
+      null,
       { id: 'f5', label: 'F5', width: 1 },
       { id: 'f6', label: 'F6', width: 1 },
       { id: 'f7', label: 'F7', width: 1 },
-      { id: 'f8', label: 'F8', width: 1 }, null,
+      { id: 'f8', label: 'F8', width: 1 },
+      null,
       { id: 'f9', label: 'F9', width: 1 },
       { id: 'f10', label: 'F10', width: 1 },
       { id: 'f11', label: 'F11', width: 1 },
-      { id: 'f12', label: 'F12', width: 1 }, null,
+      { id: 'f12', label: 'F12', width: 1 },
+      null,
       { id: 'prtsc', label: 'PrtSc', width: 1 },
       { id: 'scrlk', label: 'ScrLk', width: 1 },
       { id: 'pause', label: 'Pause', width: 1 },
@@ -129,7 +137,8 @@ const LAYOUT: RowDef[] = [
       { id: '0', label: '0', width: 1 },
       { id: 'k70', label: '-', width: 1 },
       { id: 'k386', label: '=', width: 1 },
-      { id: 'bksp', label: 'Bksp', width: 2 }, null,
+      { id: 'bksp', label: 'Bksp', width: 2 },
+      null,
       { id: 'home', label: 'Home', width: 1 },
       { id: 'pgup', label: 'PgUp', width: 1 },
     ],
@@ -152,7 +161,8 @@ const LAYOUT: RowDef[] = [
       { id: 'k659', label: '[', width: 1 },
       { id: 'k186', label: ']', width: 1 },
       { id: 'k610', label: '\\', width: 1 },
-      { id: 'k191', label: '|', width: 1 }, null,
+      { id: 'k191', label: '|', width: 1 },
+      null,
       { id: 'del', label: 'Del', width: 1 },
       { id: 'end', label: 'End', width: 1 },
       { id: 'pgdn', label: 'PgDn', width: 1 },
@@ -193,7 +203,8 @@ const LAYOUT: RowDef[] = [
       { id: 'k987', label: ',', width: 1 },
       { id: 'k621', label: '.', width: 1 },
       { id: 'k818', label: '/', width: 1 },
-      { id: 'rshift', label: 'RShift', width: 2.75 }, null,
+      { id: 'rshift', label: 'RShift', width: 2.75 },
+      null,
       { id: 'up', label: '↑', width: 1 },
     ],
   },
@@ -208,7 +219,8 @@ const LAYOUT: RowDef[] = [
       { id: 'ralt', label: 'RAlt', width: 1.25 },
       { id: 'fn', label: 'Fn', width: 1.25 },
       { id: 'rctrl', label: 'RCtrl', width: 1.25 },
-      { id: 'menu', label: 'Menu', width: 1 }, null,
+      { id: 'menu', label: 'Menu', width: 1 },
+      null,
       { id: 'left', label: '←', width: 1 },
       { id: 'down', label: '↓', width: 1 },
       { id: 'right', label: '→', width: 1 },
@@ -220,7 +232,7 @@ const LAYOUT: RowDef[] = [
 
 const keyColors = new Map<string, RGBColor>();
 let ws: WebSocket | null = null;
-let selectedKeys = new Set<string>();
+const selectedKeys = new Set<string>();
 let currentEffect: string | null = null;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let reconnectAttempt = 0;
@@ -277,9 +289,8 @@ function hexToRgb(hex: string): RGBColor {
 function setStatus(type: 'connected' | 'disconnected' | 'connecting', message: string): void {
   statusText.textContent = message;
   connectionBadge.className = `badge badge-${type}`;
-  connectionBadge.textContent = type === 'connected' ? 'Connected'
-    : type === 'connecting' ? 'Connecting…'
-    : 'Disconnected';
+  connectionBadge.textContent =
+    type === 'connected' ? 'Connected' : type === 'connecting' ? 'Connecting…' : 'Disconnected';
 }
 
 function sendMessage(msg: unknown): void {
@@ -293,8 +304,8 @@ function handleServerMessage(raw: unknown): void {
 
   switch (msg.type) {
     case 'layout': {
-      const layoutMsg = msg as LayoutMessage;
-      validKeyIds = new Set(layoutMsg.keys.map(k => k.id));
+      const layoutMsg = msg;
+      validKeyIds = new Set(layoutMsg.keys.map((k) => k.id));
       for (const key of layoutMsg.keys) {
         if (key.color) {
           keyColors.set(key.id, key.color);
@@ -306,21 +317,21 @@ function handleServerMessage(raw: unknown): void {
     }
 
     case 'key_color': {
-      const colorMsg = msg as KeyColorMessage;
+      const colorMsg = msg;
       keyColors.set(colorMsg.keyId, colorMsg.color);
       updateKeyColorDisplay(colorMsg.keyId);
       break;
     }
 
     case 'effect_active': {
-      const effectMsg = msg as EffectActiveMessage;
+      const effectMsg = msg;
       currentEffect = effectMsg.effect;
       updateActiveEffect(effectMsg.effect);
       break;
     }
 
     case 'profile_list': {
-      const listMsg = msg as ProfileListMessage;
+      const listMsg = msg;
       profileSelect.innerHTML = '<option value="">-- Select Profile --</option>';
       for (const item of listMsg.profiles) {
         const opt = document.createElement('option');
@@ -333,7 +344,7 @@ function handleServerMessage(raw: unknown): void {
     }
 
     case 'profile_data': {
-      const dataMsg = msg as ProfileDataMessage;
+      const dataMsg = msg;
       // Apply colors from profile
       keyColors.clear();
       for (const [keyId, color] of Object.entries(dataMsg.profile.colors)) {
@@ -399,7 +410,7 @@ function connectWebSocket(): void {
 
   ws.onmessage = (event: MessageEvent) => {
     try {
-      const data = JSON.parse(event.data as string);
+      const data = JSON.parse(event.data as string) as Record<string, unknown>;
       handleServerMessage(data);
     } catch {
       console.error('Failed to parse server message:', event.data);
@@ -605,9 +616,7 @@ function updateActiveEffect(effect: string): void {
 
 function updateSelectionCounter(): void {
   if (selectionInfo) {
-    selectionInfo.textContent = selectedKeys.size > 0
-      ? `${selectedKeys.size} key(s) selected`
-      : '';
+    selectionInfo.textContent = selectedKeys.size > 0 ? `${selectedKeys.size} key(s) selected` : '';
   }
 }
 
@@ -618,8 +627,8 @@ function setupToolbar(): void {
       const effect = btn.dataset.effect!;
 
       // Apply effect — map 0-10 to 0-4 for firmware
-      const brightness = Math.round(parseInt(brightnessSlider.value, 10) * 4 / 10);
-      const speed = Math.round(parseInt(speedSlider.value, 10) * 4 / 10);
+      const brightness = Math.round((parseInt(brightnessSlider.value, 10) * 4) / 10);
+      const speed = Math.round((parseInt(speedSlider.value, 10) * 4) / 10);
       sendMessage({
         type: 'apply_effect',
         effect,
@@ -633,7 +642,7 @@ function setupToolbar(): void {
     const level = parseInt(brightnessSlider.value, 10);
     brightnessValue.textContent = String(level);
     // Map 0-10 → 0-4 for firmware effects
-    const firmwareLevel = Math.round(level * 4 / 10);
+    const firmwareLevel = Math.round((level * 4) / 10);
     sendMessage({ type: 'set_brightness', level: firmwareLevel });
     // Re-apply all current colors with new brightness
     applyCurrentColors();
@@ -711,7 +720,10 @@ function setupToolbar(): void {
   // ── Profile buttons ──────────────────────────────────────
   profileSaveBtn.addEventListener('click', () => {
     const name = profileNameInput.value.trim();
-    if (!name) { alert('Enter a profile name'); return; }
+    if (!name) {
+      alert('Enter a profile name');
+      return;
+    }
 
     // Collect all current key colors
     const colors: Record<string, RGBColor> = {};
@@ -737,13 +749,19 @@ function setupToolbar(): void {
 
   profileLoadBtn.addEventListener('click', () => {
     const name = profileSelect.value;
-    if (!name) { alert('Select a profile to load'); return; }
+    if (!name) {
+      alert('Select a profile to load');
+      return;
+    }
     sendMessage({ type: 'profile_load', name });
   });
 
   profileDeleteBtn.addEventListener('click', () => {
     const name = profileSelect.value;
-    if (!name) { alert('Select a profile to delete'); return; }
+    if (!name) {
+      alert('Select a profile to delete');
+      return;
+    }
     if (confirm(`Delete profile "${name}"?`)) {
       sendMessage({ type: 'profile_delete', name });
     }
@@ -754,7 +772,9 @@ function setupToolbar(): void {
     const selected = profileSelect.selectedOptions[0];
     const isBuiltin = selected?.dataset.builtin === 'true';
     profileDeleteBtn.disabled = isBuiltin;
-    profileDeleteBtn.title = isBuiltin ? 'Built-in profiles cannot be deleted' : 'Delete selected profile';
+    profileDeleteBtn.title = isBuiltin
+      ? 'Built-in profiles cannot be deleted'
+      : 'Delete selected profile';
   });
 
   // Request profile list on connect

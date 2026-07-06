@@ -1,5 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
-import { StaticFirmwareBurst, RainbowFirmwareBurst, GenericFirmwareBurst } from '../patterns/firmware-burst.js';
+import {
+  StaticFirmwareBurst,
+  RainbowFirmwareBurst,
+  GenericFirmwareBurst,
+} from '../patterns/firmware-burst.js';
 import { FrameBuilder, FIRMWARE_EFFECTS } from '../protocol.js';
 import { KeyLayout } from '../layout.js';
 import type { IDevice } from '../ports/idevice.js';
@@ -20,12 +24,7 @@ describe('FirmwareBurstOperation (Template Method)', () => {
 
   it('StaticFirmwareBurst sends 5 firmware burst frames', () => {
     const device = createDevice();
-    const operation = new StaticFirmwareBurst(
-      device,
-      frameBuilder,
-      { r: 255, g: 0, b: 0 },
-      3,
-    );
+    const operation = new StaticFirmwareBurst(device, frameBuilder, { r: 255, g: 0, b: 0 }, 3);
 
     operation.execute();
 
@@ -56,10 +55,12 @@ describe('FirmwareBurstOperation (Template Method)', () => {
   it('GenericFirmwareBurst sends 5 firmware burst frames', () => {
     const device = createDevice();
     const operation = new GenericFirmwareBurst(
-      device, frameBuilder,
+      device,
+      frameBuilder,
       FIRMWARE_EFFECTS.SNAKE,
       { r: 255, g: 100, b: 0 },
-      3, 2,
+      3,
+      2
     );
 
     operation.execute();

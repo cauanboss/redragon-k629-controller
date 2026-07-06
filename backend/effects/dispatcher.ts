@@ -37,7 +37,7 @@ export class FirmwareStaticStrategy implements IEffectStrategy {
   apply(controller: Controller, params: EffectParams): void {
     controller.applyFirmwareStatic(
       params.color ?? DEFAULT_FIRMWARE_STATIC_COLOR,
-      params.brightness ?? 3,
+      params.brightness ?? 3
     );
   }
 }
@@ -51,10 +51,7 @@ export class FirmwareRainbowStrategy implements IEffectStrategy {
   }
 
   apply(controller: Controller, params: EffectParams): void {
-    controller.applyFirmwareRainbow(
-      params.brightness ?? 3,
-      params.speed ?? 2,
-    );
+    controller.applyFirmwareRainbow(params.brightness ?? 3, params.speed ?? 2);
   }
 }
 
@@ -83,7 +80,7 @@ export class FirmwareSnakeStrategy implements IEffectStrategy {
       FIRMWARE_EFFECTS.SNAKE,
       resolveColor(params),
       params.brightness ?? 3,
-      params.speed ?? 2,
+      params.speed ?? 2
     );
   }
 }
@@ -101,7 +98,7 @@ export class FirmwareStarTwinkleStrategy implements IEffectStrategy {
       FIRMWARE_EFFECTS.STAR_TWINKLE,
       resolveColor(params),
       params.brightness ?? 3,
-      params.speed ?? 2,
+      params.speed ?? 2
     );
   }
 }
@@ -119,7 +116,7 @@ export class FirmwareSineWaveStrategy implements IEffectStrategy {
       FIRMWARE_EFFECTS.SINE_WAVE,
       resolveColor(params),
       params.brightness ?? 3,
-      params.speed ?? 2,
+      params.speed ?? 2
     );
   }
 }
@@ -137,7 +134,7 @@ export class FirmwareWaterfallStrategy implements IEffectStrategy {
       FIRMWARE_EFFECTS.WATERFALL,
       resolveColor(params),
       params.brightness ?? 3,
-      params.speed ?? 2,
+      params.speed ?? 2
     );
   }
 }
@@ -155,7 +152,7 @@ export class FirmwareRainbowBlossomStrategy implements IEffectStrategy {
       FIRMWARE_EFFECTS.RAINBOW_BLOSSOM,
       resolveColor(params),
       params.brightness ?? 3,
-      params.speed ?? 2,
+      params.speed ?? 2
     );
   }
 }
@@ -173,7 +170,7 @@ export class FirmwareWheelStrategy implements IEffectStrategy {
       FIRMWARE_EFFECTS.WHEEL,
       resolveColor(params),
       params.brightness ?? 3,
-      params.speed ?? 2,
+      params.speed ?? 2
     );
   }
 }
@@ -194,11 +191,7 @@ export class EffectDispatcher {
    * Applies the named effect.
    * @returns true when the effect was found and applied
    */
-  apply(
-    effectName: string,
-    controller: Controller,
-    params: EffectParams = {},
-  ): boolean {
+  apply(effectName: string, controller: Controller, params: EffectParams = {}): boolean {
     // Stop any running host-driven effect before applying a new one.
     controller.stopEffect();
 
@@ -220,7 +213,7 @@ export class EffectDispatcher {
   private applyHostEffect(
     effectName: string,
     controller: Controller,
-    params: EffectParams,
+    params: EffectParams
   ): boolean {
     const effect = getEffect(effectName);
 

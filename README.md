@@ -172,6 +172,8 @@ pnpm cli color ff0000   # CLI compilada
 
 Variáveis de ambiente opcionais: `PORT` (padrão 3000), `HOST` (padrão 127.0.0.1).
 
+Health check: `GET http://localhost:3000/health` → `{ status, version, deviceConnected, deviceLabel }`.
+
 ## Comandos de desenvolvimento
 
 | Comando | Descrição |
@@ -187,8 +189,12 @@ Variáveis de ambiente opcionais: `PORT` (padrão 3000), `HOST` (padrão 127.0.0
 | `pnpm build:frontend` | Compila apenas o frontend |
 | `pnpm start` | Node produção (dist/start-server.js) |
 | `pnpm cli` | CLI compilada |
-| `pnpm test` | Roda 178 testes unitários |
+| `pnpm test` | Roda 179 testes unitários |
 | `pnpm test:watch` | Testes em watch mode |
+| `pnpm lint` | ESLint (backend + frontend/src) |
+| `pnpm lint:fix` | ESLint com auto-fix |
+| `pnpm format` | Prettier |
+| `pnpm format:check` | Verifica formatação (CI) |
 | `pnpm tauri:dev` | Tauri dev mode com hot-reload |
 | `pnpm tauri:build` | Produção Tauri desktop app |
 
@@ -244,7 +250,8 @@ Burst de **5 feature reports** (cada 1032 bytes):
 |---|---|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Padrões de projeto, camadas, como estender |
 | [docs/FIRMWARE-EFFECTS.md](docs/FIRMWARE-EFFECTS.md) | Diagnóstico dos efeitos firmware no K629 |
-| [docs/PRODUCTION-READINESS.md](docs/PRODUCTION-READINESS.md) | Roadmap release, checklist v1.0, melhorias de UI |
+| [docs/PRODUCTION-READINESS.md](docs/PRODUCTION-READINESS.md) | Checklist release v1.0 |
+| [docs/NEXT-STEPS.md](docs/NEXT-STEPS.md) | Roadmap por fases |
 | [docs/CHANGELOG.md](docs/CHANGELOG.md) | Histórico das mudanças arquiteturais |
 
 ## Licença

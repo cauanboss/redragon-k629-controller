@@ -23,10 +23,7 @@ export {
   EffectDispatcher,
   defaultEffectDispatcher,
 } from './effects/index.js';
-export {
-  CommandRegistry,
-  createDefaultCommandRegistry,
-} from './commands/registry.js';
+export { CommandRegistry, createDefaultCommandRegistry } from './commands/registry.js';
 export { createDefaultCommands } from './commands/keyboard.commands.js';
 export { validateMessage } from './commands/validate.js';
 export type { ICommand, CommandContext, WsMessage } from './commands/types.js';

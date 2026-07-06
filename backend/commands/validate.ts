@@ -39,7 +39,7 @@ export function validateMessage(raw: unknown): WsMessage | string {
     case 'reset':
     case 'profile_list':
     case 'stop_effect':
-      return { type: msg.type } as WsMessage;
+      return { type: msg.type };
 
     case 'set_key_color': {
       if (typeof msg.keyId !== 'string' || msg.keyId.length === 0) {
@@ -52,7 +52,7 @@ export function validateMessage(raw: unknown): WsMessage | string {
         type: 'set_key_color',
         keyId: msg.keyId,
         color: msg.color,
-      } as WsMessage;
+      };
     }
 
     case 'set_colors': {
@@ -68,7 +68,7 @@ export function validateMessage(raw: unknown): WsMessage | string {
       return {
         type: 'set_colors',
         colors: colors as Record<string, RGBColor>,
-      } as WsMessage;
+      };
     }
 
     case 'set_all_color': {
@@ -78,21 +78,21 @@ export function validateMessage(raw: unknown): WsMessage | string {
       return {
         type: 'set_all_color',
         color: msg.color,
-      } as WsMessage;
+      };
     }
 
     case 'set_brightness': {
       if (typeof msg.level !== 'number' || !Number.isFinite(msg.level)) {
         return 'set_brightness requires a numeric level';
       }
-      return { type: 'set_brightness', level: msg.level } as WsMessage;
+      return { type: 'set_brightness', level: msg.level };
     }
 
     case 'set_speed': {
       if (typeof msg.level !== 'number' || !Number.isFinite(msg.level)) {
         return 'set_speed requires a numeric level';
       }
-      return { type: 'set_speed', level: msg.level } as WsMessage;
+      return { type: 'set_speed', level: msg.level };
     }
 
     case 'apply_effect': {
@@ -114,7 +114,7 @@ export function validateMessage(raw: unknown): WsMessage | string {
         type: 'apply_effect',
         effect: msg.effect,
         ...(params !== undefined ? { params } : {}),
-      } as WsMessage;
+      };
     }
 
     case 'profile_save': {
@@ -128,21 +128,21 @@ export function validateMessage(raw: unknown): WsMessage | string {
         type: 'profile_save',
         name: msg.name,
         profile: msg.profile as Record<string, unknown>,
-      } as WsMessage;
+      };
     }
 
     case 'profile_load': {
       if (typeof msg.name !== 'string' || msg.name.length === 0) {
         return 'profile_load requires a non-empty name string';
       }
-      return { type: 'profile_load', name: msg.name } as WsMessage;
+      return { type: 'profile_load', name: msg.name };
     }
 
     case 'profile_delete': {
       if (typeof msg.name !== 'string' || msg.name.length === 0) {
         return 'profile_delete requires a non-empty name string';
       }
-      return { type: 'profile_delete', name: msg.name } as WsMessage;
+      return { type: 'profile_delete', name: msg.name };
     }
 
     default:

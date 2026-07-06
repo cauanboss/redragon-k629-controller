@@ -46,4 +46,4 @@ registerEffect(new AudioVisualizerEffect());
 
 // Load user plugins
 import { loadPlugins } from './plugin-loader.js';
-loadPlugins().catch(err => console.warn('[plugin] Plugin loader failed:', err));
+loadPlugins().catch((err) => console.warn('[plugin] Plugin loader failed:', err));

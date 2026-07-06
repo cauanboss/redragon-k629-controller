@@ -15,7 +15,11 @@ export class SetKeyColorCommand implements ICommand {
   readonly type = 'set_key_color';
 
   execute(context: CommandContext) {
-    const msg = context.message as WsMessage & { type: 'set_key_color'; keyId: string; color: RGBColor };
+    const msg = context.message as WsMessage & {
+      type: 'set_key_color';
+      keyId: string;
+      color: RGBColor;
+    };
     const { keyId, color } = msg;
 
     if (!keyId || !color) {
@@ -31,7 +35,10 @@ export class SetColorsCommand implements ICommand {
   readonly type = 'set_colors';
 
   execute(context: CommandContext) {
-    const msg = context.message as WsMessage & { type: 'set_colors'; colors: Record<string, RGBColor> };
+    const msg = context.message as WsMessage & {
+      type: 'set_colors';
+      colors: Record<string, RGBColor>;
+    };
     const { colors } = msg;
 
     if (!colors || typeof colors !== 'object') {
@@ -114,7 +121,11 @@ export class ApplyEffectCommand implements ICommand {
   readonly type = 'apply_effect';
 
   execute(context: CommandContext) {
-    const msg = context.message as WsMessage & { type: 'apply_effect'; effect: string; params?: Record<string, number> };
+    const msg = context.message as WsMessage & {
+      type: 'apply_effect';
+      effect: string;
+      params?: Record<string, number>;
+    };
     const effectName = msg.effect;
 
     if (!effectName) {
@@ -124,11 +135,10 @@ export class ApplyEffectCommand implements ICommand {
     const brightness = msg.params?.brightness ?? context.settings.brightness;
     const speed = msg.params?.speed ?? context.settings.speed;
 
-    const applied = context.effectDispatcher.apply(
-      effectName,
-      context.controller,
-      { brightness, speed },
-    );
+    const applied = context.effectDispatcher.apply(effectName, context.controller, {
+      brightness,
+      speed,
+    });
 
     if (!applied) {
       return error(`Unknown effect: ${effectName}`);
@@ -138,10 +148,7 @@ export class ApplyEffectCommand implements ICommand {
   }
 }
 
-function readProfileField<T>(
-  profile: Record<string, unknown>,
-  field: string,
-): T | undefined {
+function readProfileField<T>(profile: Record<string, unknown>, field: string): T | undefined {
   return profile[field] as T | undefined;
 }
 
@@ -149,7 +156,11 @@ export class ProfileSaveCommand implements ICommand {
   readonly type = 'profile_save';
 
   execute(context: CommandContext) {
-    const msg = context.message as WsMessage & { type: 'profile_save'; name: string; profile: Record<string, unknown> };
+    const msg = context.message as WsMessage & {
+      type: 'profile_save';
+      name: string;
+      profile: Record<string, unknown>;
+    };
     const { name, profile } = msg;
 
     if (!name || !profile) {
@@ -219,7 +230,7 @@ export class ProfileListCommand implements ICommand {
 
   execute(context: CommandContext) {
     const names = context.profiles.list();
-    const profiles = names.map(name => ({
+    const profiles = names.map((name) => ({
       name,
       builtin: context.profiles.isBuiltin(name),
     }));
@@ -239,7 +250,9 @@ export class ProfileDeleteCommand implements ICommand {
     }
 
     if (context.profiles.isBuiltin(name)) {
-      return error(`"${name}" is a built-in profile and cannot be deleted. Save changes as a new profile instead.`);
+      return error(
+        `"${name}" is a built-in profile and cannot be deleted. Save changes as a new profile instead.`
+      );
     }
 
     if (context.profiles.delete(name)) {

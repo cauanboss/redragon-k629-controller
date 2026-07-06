@@ -17,24 +17,42 @@
 import { DeviceManager } from '../device.js';
 
 const dev = new DeviceManager();
-if (!dev.find()) { console.error('Keyboard not found.'); process.exit(1); }
-try { dev.open(); } catch { console.error('Permission denied.'); process.exit(1); }
+if (!dev.find()) {
+  console.error('Keyboard not found.');
+  process.exit(1);
+}
+try {
+  dev.open();
+} catch {
+  console.error('Permission denied.');
+  process.exit(1);
+}
 
 function sendHw(hwRow: number, hwCol: number, r = 255, g = 0, b = 0) {
   const buf = Buffer.alloc(382, 0);
-  buf[0] = 0x08; buf[1] = 0x0a; buf[2] = 0x7a; buf[3] = 0x01;
+  buf[0] = 0x08;
+  buf[1] = 0x0a;
+  buf[2] = 0x7a;
+  buf[3] = 0x01;
   const off = 4 + (hwRow * 16 + hwCol) * 3;
-  buf[off] = r; buf[off + 1] = g; buf[off + 2] = b;
+  buf[off] = r;
+  buf[off + 1] = g;
+  buf[off + 2] = b;
   dev.sendFeatureReport(buf);
 }
 
 function allOff() {
   const buf = Buffer.alloc(382, 0);
-  buf[0] = 0x08; buf[1] = 0x0a; buf[2] = 0x7a; buf[3] = 0x01; // header obrigatório
+  buf[0] = 0x08;
+  buf[1] = 0x0a;
+  buf[2] = 0x7a;
+  buf[3] = 0x01; // header obrigatório
   dev.sendFeatureReport(buf);
 }
 
-function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)); }
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
 async function testHwCell(hwRow: number, hwCol: number) {
   process.stdout.write(`\rhw(${hwRow},${hwCol}) → layout(${hwCol},${hwRow})  `);
@@ -54,23 +72,20 @@ async function main() {
         await testHwCell(hwRow, hwCol);
       }
     }
-  } 
-  else if (cmd === 'row') {
+  } else if (cmd === 'row') {
     const hwRow = parseInt(process.argv[3] || '0');
     console.log(`\nTestando hardware row ${hwRow}:`);
     for (let hwCol = 0; hwCol < 16; hwCol++) {
       await testHwCell(hwRow, hwCol);
     }
-  }
-  else if (cmd === 'cell') {
+  } else if (cmd === 'cell') {
     const hwRow = parseInt(process.argv[3] || '0');
     const hwCol = parseInt(process.argv[4] || '0');
     console.log(`\nTestando hw(${hwRow},${hwCol}) por 10s...`);
     sendHw(hwRow, hwCol, 0, 255, 0);
     await sleep(10000);
     allOff();
-  }
-  else if (cmd === 'pos') {
+  } else if (cmd === 'pos') {
     // Test by layout position (transposed to hw)
     const lRow = parseInt(process.argv[3] || '0');
     const lCol = parseInt(process.argv[4] || '0');
@@ -80,8 +95,7 @@ async function main() {
     sendHw(hwRow, hwCol, 0, 255, 0);
     await sleep(10000);
     allOff();
-  }
-  else {
+  } else {
     console.log('Uso:');
     console.log('  pnpm tsx tools/debug-layout.ts all');
     console.log('  pnpm tsx tools/debug-layout.ts row <0-5>');
@@ -93,4 +107,8 @@ async function main() {
   console.log('\nFim.');
 }
 
-main().catch(e => { console.error(e); dev.close(); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  dev.close();
+  process.exit(1);
+});

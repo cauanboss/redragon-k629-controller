@@ -20,11 +20,11 @@ export class FileProfileRepository implements IProfileRepository {
   constructor(
     private readonly storeDir = DEFAULT_STORE_DIR,
     private readonly storePath = DEFAULT_STORE_PATH,
-    private readonly builtinNames: ReadonlySet<string> = new Set(),
+    private readonly builtinNames: ReadonlySet<string> = new Set()
   ) {}
 
   list(): string[] {
-    const user = this.readAll().map(p => p.name);
+    const user = this.readAll().map((p) => p.name);
     const all = new Set([...this.builtinNames, ...user]);
     return Array.from(all);
   }
@@ -36,16 +36,20 @@ export class FileProfileRepository implements IProfileRepository {
     // exists yet, auto-rename to avoid overwriting the built-in.
     if (this.builtinNames.has(profile.name)) {
       const all = this.readAll();
-      const userEntry = all.find(p => p.name === profile.name);
+      const userEntry = all.find((p) => p.name === profile.name);
       if (!userEntry) {
         actualName = `${profile.name} (custom)`;
       }
     }
 
     const all = this.readAll();
-    const index = all.findIndex(entry => entry.name === actualName);
+    const index = all.findIndex((entry) => entry.name === actualName);
 
-    const stored: StoredProfile = { ...profile, name: actualName, builtin: this.builtinNames.has(actualName) };
+    const stored: StoredProfile = {
+      ...profile,
+      name: actualName,
+      builtin: this.builtinNames.has(actualName),
+    };
 
     if (index >= 0) {
       all[index] = stored;
@@ -59,7 +63,7 @@ export class FileProfileRepository implements IProfileRepository {
 
   load(name: string): StoredProfile | undefined {
     // User-stored profiles take precedence (they may override builtins)
-    const userProfile = this.readAll().find(p => p.name === name);
+    const userProfile = this.readAll().find((p) => p.name === name);
     if (userProfile) return userProfile;
 
     // Fallback to built-in color data
@@ -117,7 +121,9 @@ export class FileProfileRepository implements IProfileRepository {
 
 /** Default singleton used by the application (includes built-in profiles). */
 export const defaultProfileRepository = new FileProfileRepository(
-  DEFAULT_STORE_DIR, DEFAULT_STORE_PATH, BUILTIN_PROFILE_NAMES
+  DEFAULT_STORE_DIR,
+  DEFAULT_STORE_PATH,
+  BUILTIN_PROFILE_NAMES
 );
 
 // Legacy module-level API (backward compatible)

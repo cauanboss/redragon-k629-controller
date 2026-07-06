@@ -13,12 +13,23 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const dev = new DeviceManager();
-if (!dev.find()) { console.error('Keyboard not found.'); process.exit(1); }
-try { dev.open(); } catch { console.error('Permission denied.'); process.exit(1); }
+if (!dev.find()) {
+  console.error('Keyboard not found.');
+  process.exit(1);
+}
+try {
+  dev.open();
+} catch {
+  console.error('Permission denied.');
+  process.exit(1);
+}
 
 function send(idx: number, r = 255, g = 100, b = 0) {
   const buf = Buffer.alloc(382, 0);
-  buf[0] = 0x08; buf[1] = 0x0a; buf[2] = 0x7a; buf[3] = 0x01;
+  buf[0] = 0x08;
+  buf[1] = 0x0a;
+  buf[2] = 0x7a;
+  buf[3] = 0x01;
   buf[4 + idx * 3] = r;
   buf[5 + idx * 3] = g;
   buf[6 + idx * 3] = b;
@@ -27,7 +38,10 @@ function send(idx: number, r = 255, g = 100, b = 0) {
 
 function off() {
   const buf = Buffer.alloc(382, 0);
-  buf[0] = 0x08; buf[1] = 0x0a; buf[2] = 0x7a; buf[3] = 0x01;
+  buf[0] = 0x08;
+  buf[1] = 0x0a;
+  buf[2] = 0x7a;
+  buf[3] = 0x01;
   dev.sendFeatureReport(buf);
 }
 
@@ -36,7 +50,7 @@ async function main() {
     input: process.stdin,
     output: process.stdout,
   });
-  const question = (q: string) => new Promise<string>(r => rl.question(q, r));
+  const question = (q: string) => new Promise<string>((r) => rl.question(q, r));
 
   const map = new Map<number, string>();
 
@@ -47,15 +61,15 @@ async function main() {
   // Agrupa em blocos de 10 para facilitar
   for (let block = 0; block < 10; block++) {
     console.log(`\n--- Bloco ${block * 10}-${Math.min(block * 10 + 9, 95)} ---`);
-    
+
     for (let i = block * 10; i < Math.min(block * 10 + 10, 96); i++) {
       send(i);
-      
+
       const key = await question(`  LED ${i}: `);
       if (key) map.set(i, key);
-      
+
       off();
-      await new Promise(r => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200));
     }
   }
 
@@ -75,7 +89,7 @@ async function main() {
         const key = await question(`  LED ${i} (faltou): `);
         if (key) map.set(i, key);
         off();
-        await new Promise(r => setTimeout(r, 200));
+        await new Promise((r) => setTimeout(r, 200));
       }
     }
   }
@@ -149,11 +163,11 @@ export class KeyLayout {
   // Gerado automaticamente pelo map-quick.ts
   // ---------------------------------------------------------------
   private static KEY_DEFS: [number, number, RawKeyDef][] = [
-${keys2.map(k => `    [${k.row}, ${k.col}, { id: '${k.id}', label: '${k.cap}' }],`).join('\n')}
+${keys2.map((k) => `    [${k.row}, ${k.col}, { id: '${k.id}', label: '${k.cap}' }],`).join('\n')}
   ];
 
   private static NULL_CELLS: [number, number][] = [
-${nulls.map(n => `    [${n.row}, ${n.col}],`).join('\n')}
+${nulls.map((n) => `    [${n.row}, ${n.col}],`).join('\n')}
   ];
 
   private buildKeys(): KeyInfo[] {
@@ -193,4 +207,8 @@ ${nulls.map(n => `    [${n.row}, ${n.col}],`).join('\n')}
   dev.close();
 }
 
-main().catch(e => { console.error(e); dev.close(); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  dev.close();
+  process.exit(1);
+});

@@ -63,9 +63,7 @@ export class Controller {
   applyColorMap(colorFn: (keyId: string) => RGBColor): void {
     this.ensureConnected();
 
-    const frame = this.frameBuilder.buildPerKeyFrame(
-      (key) => colorFn(key.id),
-    );
+    const frame = this.frameBuilder.buildPerKeyFrame((key) => colorFn(key.id));
 
     this.deviceManager.sendFeatureReport(frame);
   }
@@ -86,29 +84,31 @@ export class Controller {
   }
 
   /** Apply any firmware effect using a burst operation (Template Method). */
-  applyGenericFirmwareBurst(mode: number, color: RGBColor, brightness: number, speed: number): void {
+  applyGenericFirmwareBurst(
+    mode: number,
+    color: RGBColor,
+    brightness: number,
+    speed: number
+  ): void {
     this.ensureConnected();
-    new GenericFirmwareBurst(this.deviceManager, this.frameBuilder, mode, color, brightness, speed).execute();
+    new GenericFirmwareBurst(
+      this.deviceManager,
+      this.frameBuilder,
+      mode,
+      color,
+      brightness,
+      speed
+    ).execute();
   }
 
   applyFirmwareStatic(color: RGBColor, brightness = 3): void {
     this.ensureConnected();
-    new StaticFirmwareBurst(
-      this.deviceManager,
-      this.frameBuilder,
-      color,
-      brightness,
-    ).execute();
+    new StaticFirmwareBurst(this.deviceManager, this.frameBuilder, color, brightness).execute();
   }
 
   applyFirmwareRainbow(brightness = 3, speed = 2): void {
     this.ensureConnected();
-    new RainbowFirmwareBurst(
-      this.deviceManager,
-      this.frameBuilder,
-      brightness,
-      speed,
-    ).execute();
+    new RainbowFirmwareBurst(this.deviceManager, this.frameBuilder, brightness, speed).execute();
   }
 
   startEffect(effect: IEffect, fps = 30): void {
@@ -148,9 +148,7 @@ export class Controller {
 
   private ensureConnected(): void {
     if (!this.isConnected()) {
-      throw new Error(
-        'Controller is not connected to the keyboard. Call connect() first.',
-      );
+      throw new Error('Controller is not connected to the keyboard. Call connect() first.');
     }
   }
 }

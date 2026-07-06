@@ -25,13 +25,18 @@ export class AudioCapture {
     const source = `${sink}.monitor`;
 
     return new Promise((resolve, reject) => {
-      this.proc = spawn('parec', [
-        '-d', source,
-        '--latency-msec=10',
-        '--format=s16le',
-        `--rate=${this.sampleRate}`,
-        '--channels=1',
-      ], { stdio: ['ignore', 'pipe', 'pipe'] });
+      this.proc = spawn(
+        'parec',
+        [
+          '-d',
+          source,
+          '--latency-msec=10',
+          '--format=s16le',
+          `--rate=${this.sampleRate}`,
+          '--channels=1',
+        ],
+        { stdio: ['ignore', 'pipe', 'pipe'] }
+      );
 
       this.proc.stdout!.on('data', (chunk: Buffer) => this.onData(chunk));
       this.proc.on('error', reject);
@@ -68,10 +73,16 @@ export class AudioCapture {
     return new Promise((resolve, reject) => {
       const proc = spawn('pactl', ['get-default-sink'], { stdio: 'pipe' });
       let output = '';
-      proc.stdout!.on('data', (d: Buffer) => { output += d.toString(); });
+      proc.stdout.on('data', (d: Buffer) => {
+        output += d.toString();
+      });
       proc.on('close', (code) => {
         const sink = output.trim();
-        sink ? resolve(sink) : reject(new Error(`pactl exited ${code}`));
+        if (sink) {
+          resolve(sink);
+        } else {
+          reject(new Error(`pactl exited ${code}`));
+        }
       });
       proc.on('error', reject);
     });

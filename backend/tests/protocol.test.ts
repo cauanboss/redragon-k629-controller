@@ -38,7 +38,7 @@ describe('FrameBuilder — buildPerKeyFrame', () => {
     //   hwRow = layoutCol, hwCol = layoutRow
     //   offset = 4 + (hwRow * 16 + hwCol) * 3
     // NAN positions (indices 23,29,41,47,70,71,77,80,85,86,87)
-    const nullIndices = [23,29,41,47,70,71,77,80,85,86,87];
+    const nullIndices = [23, 29, 41, 47, 70, 71, 77, 80, 85, 86, 87];
     for (const idx of nullIndices) {
       const offset = 4 + idx * 3;
       expect(frame[offset]).toBe(0);
@@ -131,7 +131,7 @@ describe('FrameBuilder — buildFirmwareEffectFrame', () => {
       FIRMWARE_EFFECTS.STATIC,
       { r: 255, g: 0, b: 0 },
       3,
-      0,
+      0
     );
     expect(buffers).toHaveLength(5);
   });
@@ -141,7 +141,7 @@ describe('FrameBuilder — buildFirmwareEffectFrame', () => {
       FIRMWARE_EFFECTS.STATIC,
       { r: 255, g: 0, b: 0 },
       3,
-      0,
+      0
     );
     for (const buf of buffers) {
       expect(buf).toBeInstanceOf(Buffer);
@@ -154,7 +154,7 @@ describe('FrameBuilder — buildFirmwareEffectFrame', () => {
       FIRMWARE_EFFECTS.STATIC,
       { r: 255, g: 0, b: 0 },
       3,
-      0,
+      0
     );
     const handshake = buffers[0];
     expect(handshake[0]).toBe(0x05);
@@ -165,14 +165,14 @@ describe('FrameBuilder — buildFirmwareEffectFrame', () => {
   it('block #1 (index 1) has color at offset 29-31', () => {
     const buffers = builder.buildFirmwareEffectFrame(
       FIRMWARE_EFFECTS.STATIC,
-      { r: 0xAB, g: 0xCD, b: 0xEF },
+      { r: 0xab, g: 0xcd, b: 0xef },
       3,
-      0,
+      0
     );
     const block1 = buffers[1];
-    expect(block1[29]).toBe(0xAB);
-    expect(block1[30]).toBe(0xCD);
-    expect(block1[31]).toBe(0xEF);
+    expect(block1[29]).toBe(0xab);
+    expect(block1[30]).toBe(0xcd);
+    expect(block1[31]).toBe(0xef);
   });
 
   it('block #4 (index 4) has mode at offset 21', () => {
@@ -180,7 +180,7 @@ describe('FrameBuilder — buildFirmwareEffectFrame', () => {
       FIRMWARE_EFFECTS.RAINBOW,
       { r: 0, g: 0, b: 0 },
       3,
-      0,
+      0
     );
     const block4 = buffers[4];
     expect(block4[21]).toBe(FIRMWARE_EFFECTS.RAINBOW);
@@ -193,7 +193,7 @@ describe('FrameBuilder — buildFirmwareEffectFrame', () => {
       FIRMWARE_EFFECTS.STATIC,
       { r: 255, g: 0, b: 0 },
       brightness,
-      speed,
+      speed
     );
     const block4 = buffers[4];
     expect(block4[69]).toBe((speed << 4) | brightness);
@@ -204,7 +204,7 @@ describe('FrameBuilder — buildFirmwareEffectFrame', () => {
       FIRMWARE_EFFECTS.STATIC,
       { r: 255, g: 0, b: 0 },
       3,
-      0,
+      0
     );
     const block1 = buffers[1];
     // Header: [0x06, 0x08, 0xb8, 0x00, 0x40, 0x00, 0x00, 0x00]
@@ -223,7 +223,7 @@ describe('FrameBuilder — buildFirmwareEffectFrame', () => {
       FIRMWARE_EFFECTS.STATIC,
       { r: 300, g: -10, b: 128 },
       3,
-      0,
+      0
     );
     const block1 = buffers[1];
     // 300 → 255, -10 → 0, 128 → 128
@@ -236,8 +236,8 @@ describe('FrameBuilder — buildFirmwareEffectFrame', () => {
     const buffers = builder.buildFirmwareEffectFrame(
       FIRMWARE_EFFECTS.STATIC,
       { r: 0, g: 0, b: 0 },
-      10,   // clamped to 4
-      -1,   // clamped to 0
+      10, // clamped to 4
+      -1 // clamped to 0
     );
     const block4 = buffers[4];
     expect(block4[69]).toBe((0 << 4) | 4);

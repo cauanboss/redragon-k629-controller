@@ -1,7 +1,4 @@
-import {
-  createApplicationFromEnv,
-  type Application,
-} from './factory/app-factory.js';
+import { createApplicationFromEnv, type Application } from './factory/app-factory.js';
 import './effects/index.js';
 
 let app: Application | null = null;

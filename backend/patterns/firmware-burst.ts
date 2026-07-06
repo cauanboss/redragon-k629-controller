@@ -12,7 +12,7 @@ import type { RGBColor } from '../color.js';
 export abstract class FirmwareBurstOperation {
   constructor(
     protected readonly device: IDevice,
-    protected readonly frameBuilder?: FrameBuilder,
+    protected readonly frameBuilder?: FrameBuilder
   ) {}
 
   execute(): void {
@@ -47,7 +47,7 @@ export class StaticFirmwareBurst extends FirmwareBurstOperation {
     device: IDevice,
     frameBuilder: FrameBuilder,
     private readonly staticColor: RGBColor,
-    private readonly staticBrightness: number,
+    private readonly staticBrightness: number
   ) {
     super(device, frameBuilder);
   }
@@ -57,7 +57,7 @@ export class StaticFirmwareBurst extends FirmwareBurstOperation {
       FIRMWARE_EFFECTS.STATIC,
       this.staticColor,
       this.staticBrightness,
-      0,
+      0
     );
   }
 }
@@ -73,11 +73,18 @@ export class GenericFirmwareBurst extends FirmwareBurstOperation {
     private readonly mode: number,
     private readonly genColor: RGBColor,
     private readonly genBrightness: number,
-    private readonly genSpeed: number,
-  ) { super(device, frameBuilder); }
+    private readonly genSpeed: number
+  ) {
+    super(device, frameBuilder);
+  }
 
   protected buildFrames(): Buffer[] {
-    return this.frameBuilder!.buildFirmwareEffectFrame(this.mode, this.genColor, this.genBrightness, this.genSpeed);
+    return this.frameBuilder!.buildFirmwareEffectFrame(
+      this.mode,
+      this.genColor,
+      this.genBrightness,
+      this.genSpeed
+    );
   }
 }
 
@@ -87,7 +94,7 @@ export class RainbowFirmwareBurst extends FirmwareBurstOperation {
     device: IDevice,
     frameBuilder: FrameBuilder,
     private readonly rainbowBrightness: number,
-    private readonly rainbowSpeed: number,
+    private readonly rainbowSpeed: number
   ) {
     super(device, frameBuilder);
   }
@@ -96,5 +103,3 @@ export class RainbowFirmwareBurst extends FirmwareBurstOperation {
     return this.frameBuilder!.buildFirmwareRainbow(this.rainbowBrightness, this.rainbowSpeed);
   }
 }
-
-

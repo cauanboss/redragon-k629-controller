@@ -85,21 +85,17 @@ describe('LoggingDeviceDecorator', () => {
     });
 
     it('logs sendFeatureReport with length and hex header', () => {
-      const buf = Buffer.from([
-        0x08, 0x0a, 0x00, 0x01, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa,
-      ]);
+      const buf = Buffer.from([0x08, 0x0a, 0x00, 0x01, 0xff, 0xee, 0xdd, 0xcc, 0xbb, 0xaa]);
       decorator.sendFeatureReport(buf);
       expect(logger).toHaveBeenCalledWith(
-        '[Device] sendFeatureReport | 10B | header: 080a0001ffeeddcc',
+        '[Device] sendFeatureReport | 10B | header: 080a0001ffeeddcc'
       );
     });
 
     it('logs sendFeatureReport with short buffer (less than 8 bytes)', () => {
       const buf = Buffer.from([0x01, 0x02, 0x03]);
       decorator.sendFeatureReport(buf);
-      expect(logger).toHaveBeenCalledWith(
-        '[Device] sendFeatureReport | 3B | header: 010203',
-      );
+      expect(logger).toHaveBeenCalledWith('[Device] sendFeatureReport | 3B | header: 010203');
     });
 
     it('does NOT log isConnected() calls', () => {
@@ -127,10 +123,7 @@ describe('LoggingDeviceDecorator', () => {
       customDecorator.find();
       customDecorator.open();
 
-      expect(messages).toEqual([
-        '[Device] find() → true',
-        '[Device] open()',
-      ]);
+      expect(messages).toEqual(['[Device] find() → true', '[Device] open()']);
     });
 
     it('supports silent / noop logger', () => {

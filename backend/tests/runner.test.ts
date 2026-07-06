@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Controller } from '../controller.js';
 import { EffectRunner } from '../runner.js';
 import { StaticEffect } from '../effects/static.js';

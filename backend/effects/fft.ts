@@ -14,14 +14,17 @@ export function fftMagnitude(real: Float32Array, imag: Float32Array): Float32Arr
       [imag[i], imag[j]] = [imag[j], imag[i]];
     }
     let m = N >> 1;
-    while (m >= 1 && j >= m) { j -= m; m >>= 1; }
+    while (m >= 1 && j >= m) {
+      j -= m;
+      m >>= 1;
+    }
     j += m;
   }
 
   // Butterfly
   for (let size = 2; size <= N; size <<= 1) {
     const half = size >> 1;
-    const angle = -2 * Math.PI / size;
+    const angle = (-2 * Math.PI) / size;
     for (let i = 0; i < N; i += size) {
       for (let k = 0; k < half; k++) {
         const cos = Math.cos(angle * k);
@@ -47,6 +50,6 @@ export function fftMagnitude(real: Float32Array, imag: Float32Array): Float32Arr
 export function hannWindow(samples: Float32Array): void {
   const N = samples.length;
   for (let i = 0; i < N; i++) {
-    samples[i] *= 0.5 * (1 - Math.cos(2 * Math.PI * i / (N - 1)));
+    samples[i] *= 0.5 * (1 - Math.cos((2 * Math.PI * i) / (N - 1)));
   }
 }

@@ -15,8 +15,10 @@ export interface IEffectLifecycle {
 
 /** Type guard — checks if an effect implements lifecycle hooks. */
 export function hasLifecycle(effect: IEffect): effect is IEffect & IEffectLifecycle {
-  return typeof (effect as Partial<IEffectLifecycle>).onStart === 'function'
-      && typeof (effect as Partial<IEffectLifecycle>).onStop === 'function';
+  return (
+    typeof (effect as Partial<IEffectLifecycle>).onStart === 'function' &&
+    typeof (effect as Partial<IEffectLifecycle>).onStop === 'function'
+  );
 }
 
 export type EffectConstructor = new () => IEffect;

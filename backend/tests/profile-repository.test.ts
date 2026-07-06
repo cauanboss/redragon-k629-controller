@@ -79,7 +79,11 @@ describe('FileProfileRepository with built-in profiles', () => {
 
   beforeEach(() => {
     tempDir = mkdtempSync(join(tmpdir(), 'redragon-builtin-'));
-    repository = new FileProfileRepository(tempDir, join(tempDir, 'profiles.json'), BUILTIN_PROFILE_NAMES);
+    repository = new FileProfileRepository(
+      tempDir,
+      join(tempDir, 'profiles.json'),
+      BUILTIN_PROFILE_NAMES
+    );
   });
 
   afterEach(() => {
@@ -123,7 +127,10 @@ describe('FileProfileRepository with built-in profiles', () => {
     // First save creates a copy
     repository.save({ name: 'matrix', colors: { a: { r: 1, g: 2, b: 3 } } });
     // Second save with the same name should update the copy, not create another
-    const result = repository.save({ name: 'matrix (custom)', colors: { a: { r: 4, g: 5, b: 6 } } });
+    const result = repository.save({
+      name: 'matrix (custom)',
+      colors: { a: { r: 4, g: 5, b: 6 } },
+    });
 
     expect(result.saved).toBe(true);
     expect(result.name).toBe('matrix (custom)');

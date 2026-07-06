@@ -54,23 +54,50 @@ describe('UIServer', () => {
 
   it('starts HTTP server on the specified port', async () => {
     await new Promise<void>((resolve, reject) => {
-      http.get(`http://localhost:${TEST_PORT}`, (res) => {
-        expect(res.statusCode).toBe(200);
-        resolve();
-      }).on('error', reject);
+      http
+        .get(`http://localhost:${TEST_PORT}`, (res) => {
+          expect(res.statusCode).toBe(200);
+          resolve();
+        })
+        .on('error', reject);
+    });
+  });
+
+  it('returns health JSON at /health', async () => {
+    await new Promise<void>((resolve, reject) => {
+      http
+        .get(`http://localhost:${TEST_PORT}/health`, (res) => {
+          expect(res.statusCode).toBe(200);
+          let data = '';
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+          res.on('end', () => {
+            const body = JSON.parse(data);
+            expect(body.status).toBe('ok');
+            expect(body.version).toBeDefined();
+            expect(typeof body.deviceConnected).toBe('boolean');
+            resolve();
+          });
+        })
+        .on('error', reject);
     });
   });
 
   it('serves HTML content at the root', async () => {
     await new Promise<void>((resolve, reject) => {
-      http.get(`http://localhost:${TEST_PORT}`, (res) => {
-        let data = '';
-        res.on('data', (chunk) => { data += chunk; });
-        res.on('end', () => {
-          expect(data.toLowerCase()).toContain('<!doctype html>');
-          resolve();
-        });
-      }).on('error', reject);
+      http
+        .get(`http://localhost:${TEST_PORT}`, (res) => {
+          let data = '';
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+          res.on('end', () => {
+            expect(data.toLowerCase()).toContain('<!doctype html>');
+            resolve();
+          });
+        })
+        .on('error', reject);
     });
   });
 
@@ -124,11 +151,13 @@ describe('UIServer', () => {
 
     await new Promise<void>((resolve, reject) => {
       ws.on('open', () => {
-        ws.send(JSON.stringify({
-          type: 'set_key_color',
-          keyId: 'esc',
-          color: { r: 255, g: 0, b: 0 },
-        }));
+        ws.send(
+          JSON.stringify({
+            type: 'set_key_color',
+            keyId: 'esc',
+            color: { r: 255, g: 0, b: 0 },
+          })
+        );
       });
 
       ws.on('message', (data: Buffer) => {
@@ -196,10 +225,12 @@ describe('UIServer', () => {
 
     await new Promise<void>((resolve, reject) => {
       ws.on('open', () => {
-        ws.send(JSON.stringify({
-          type: 'set_all_color',
-          color: { r: 0, g: 255, b: 0 },
-        }));
+        ws.send(
+          JSON.stringify({
+            type: 'set_all_color',
+            color: { r: 0, g: 255, b: 0 },
+          })
+        );
       });
 
       // After a short delay, if no error, consider it a success

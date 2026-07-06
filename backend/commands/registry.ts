@@ -25,10 +25,12 @@ export class CommandRegistry {
 
     if (!command) {
       const result: CommandResult = {
-        events: [{
-          kind: 'error',
-          message: `Unknown message type: ${context.message.type}`,
-        }],
+        events: [
+          {
+            kind: 'error',
+            message: `Unknown message type: ${context.message.type}`,
+          },
+        ],
       };
 
       // If a Subject is present, notify events through it and return empty

@@ -56,8 +56,9 @@ describe('Controller', () => {
     });
 
     it('throws when not connected', () => {
-      expect(() => controller.setAllColor({ r: 255, g: 0, b: 0 }))
-        .toThrow('Controller is not connected');
+      expect(() => controller.setAllColor({ r: 255, g: 0, b: 0 })).toThrow(
+        'Controller is not connected'
+      );
     });
   });
 
@@ -68,8 +69,9 @@ describe('Controller', () => {
     });
 
     it('throws when not connected', () => {
-      expect(() => controller.setKeyColor('esc', { r: 255, g: 0, b: 0 }))
-        .toThrow('Controller is not connected');
+      expect(() => controller.setKeyColor('esc', { r: 255, g: 0, b: 0 })).toThrow(
+        'Controller is not connected'
+      );
     });
   });
 
@@ -80,8 +82,9 @@ describe('Controller', () => {
     });
 
     it('throws when not connected', () => {
-      expect(() => controller.applyFirmwareStatic({ r: 255, g: 0, b: 0 }))
-        .toThrow('Controller is not connected');
+      expect(() => controller.applyFirmwareStatic({ r: 255, g: 0, b: 0 })).toThrow(
+        'Controller is not connected'
+      );
     });
   });
 
@@ -92,8 +95,7 @@ describe('Controller', () => {
     });
 
     it('throws when not connected', () => {
-      expect(() => controller.applyFirmwareRainbow())
-        .toThrow('Controller is not connected');
+      expect(() => controller.applyFirmwareRainbow()).toThrow('Controller is not connected');
     });
   });
 
@@ -102,8 +104,9 @@ describe('Controller', () => {
       controller.connect();
       expect(() => controller.disconnect()).not.toThrow();
       // After disconnect, further sends should throw
-      expect(() => controller.setAllColor({ r: 255, g: 0, b: 0 }))
-        .toThrow('Controller is not connected');
+      expect(() => controller.setAllColor({ r: 255, g: 0, b: 0 })).toThrow(
+        'Controller is not connected'
+      );
     });
 
     it('can be called without prior connect', () => {

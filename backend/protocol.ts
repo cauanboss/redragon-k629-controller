@@ -39,7 +39,6 @@ const PER_KEY_HEADER = [0x08, 0x0a, 0x7a, 0x01];
 const PER_KEY_FRAME_SIZE = 382;
 const MATRIX_ROWS = 16;
 const MATRIX_COLS = 6;
-const MATRIX_CELLS = MATRIX_ROWS * MATRIX_COLS; // 96
 
 // ---------------------------------------------------------------------------
 // Firmware effect burst (5 × 1032 bytes)
@@ -50,9 +49,9 @@ const FW_HANDSHAKE = [0x05, 0x83, 0xb6, 0x00, 0x00, 0x00];
 
 interface FwBlockDef {
   readonly header: readonly number[];
-  readonly colorOffset?: number;   // byte offset for R,G,B (if applicable)
-  readonly modeOffset?: number;    // byte offset for effectMode (block #4)
-  readonly configOffset?: number;  // byte offset for speed|brightness (block #4)
+  readonly colorOffset?: number; // byte offset for R,G,B (if applicable)
+  readonly modeOffset?: number; // byte offset for effectMode (block #4)
+  readonly configOffset?: number; // byte offset for speed|brightness (block #4)
 }
 
 const FW_BLOCKS: readonly FwBlockDef[] = [
@@ -160,7 +159,7 @@ export class FrameBuilder {
     effectMode: number,
     color: RGBColor,
     brightness: number,
-    speed: number,
+    speed: number
   ): Buffer[] {
     const safeColor = {
       r: clampByte(color.r),
@@ -178,7 +177,9 @@ export class FrameBuilder {
     const blocks: Buffer[] = [handshake];
 
     for (let i = 0; i < FW_BLOCKS.length; i++) {
-      blocks.push(this.buildFwBlock(FW_BLOCKS[i], effectMode, safeColor, safeBrightness, safeSpeed));
+      blocks.push(
+        this.buildFwBlock(FW_BLOCKS[i], effectMode, safeColor, safeBrightness, safeSpeed)
+      );
     }
 
     return blocks;
@@ -194,7 +195,7 @@ export class FrameBuilder {
       FIRMWARE_EFFECTS.RAINBOW,
       { r: 0, g: 0, b: 0 },
       brightness,
-      speed,
+      speed
     );
   }
 
@@ -207,7 +208,7 @@ export class FrameBuilder {
     effectMode: number,
     color: RGBColor,
     brightness: number,
-    speed: number,
+    speed: number
   ): Buffer {
     const buf = Buffer.alloc(FW_BURST_SIZE, 0);
 

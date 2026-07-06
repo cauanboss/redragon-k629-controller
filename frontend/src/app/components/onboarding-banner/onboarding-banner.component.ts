@@ -27,9 +27,7 @@ function udevHintForEnvironment(): UdevHint {
 
   return {
     intro: 'USB permission is required. From the project folder, run:',
-    commands: [
-      'bash scripts/install-udev.sh',
-    ],
+    commands: ['bash scripts/install-udev.sh'],
     footer: 'Then unplug and reconnect the keyboard USB cable.',
   };
 }
@@ -111,14 +109,12 @@ export class OnboardingBannerComponent implements OnInit, OnDestroy {
     this.dismissed = localStorage.getItem(STORAGE_KEY) === '1';
 
     this.subs.push(
-      combineLatest([
-        this.ws.connectionStatus$,
-        this.state.keyboardConnected$,
-      ]).subscribe(([wsStatus, keyboardConnected]) => {
-        const backendReady = wsStatus === 'connected';
-        this.visible =
-          !this.dismissed && backendReady && !keyboardConnected;
-      })
+      combineLatest([this.ws.connectionStatus$, this.state.keyboardConnected$]).subscribe(
+        ([wsStatus, keyboardConnected]) => {
+          const backendReady = wsStatus === 'connected';
+          this.visible = !this.dismissed && backendReady && !keyboardConnected;
+        }
+      )
     );
   }
 

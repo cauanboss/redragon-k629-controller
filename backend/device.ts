@@ -12,7 +12,7 @@ import type { IDevice } from './ports/idevice.js';
 // If you have a compatible model not listed here, add its VID:PID below
 // and it will be auto-detected.
 
-const REDRAGON_VENDOR_WIRED = 0x258a;   // BY Tech / Sinowealth
+const REDRAGON_VENDOR_WIRED = 0x258a; // BY Tech / Sinowealth
 const REDRAGON_VENDOR_WIRELESS = 0x25a7; // Compx dongle
 
 /** Confirmed SH68F90A models (ordered by priority). */
@@ -54,8 +54,7 @@ export class DeviceManager implements IDevice {
    * @returns true if a matching device was found
    */
   find(): boolean {
-    let devices: HID.Device[] = [];
-
+    let devices: HID.Device[];
     try {
       devices = HID.devices();
     } catch {
@@ -70,7 +69,7 @@ export class DeviceManager implements IDevice {
           d.vendorId === vid &&
           d.productId === pid &&
           d.usagePage === VENDOR_USAGE_PAGE &&
-          d.path != null,
+          d.path != null
       );
       if (match?.path) {
         this.devicePath = match.path;
@@ -99,7 +98,7 @@ export class DeviceManager implements IDevice {
       if (!this.find()) {
         throw new Error(
           'Redragon keyboard not found. Ensure the device is connected ' +
-          'and you have the udev rule installed (backend/config/99-redragon.rules).',
+            'and you have the udev rule installed (backend/config/99-redragon.rules).'
         );
       }
     }
@@ -110,6 +109,7 @@ export class DeviceManager implements IDevice {
       const message = err instanceof Error ? err.message : String(err);
       throw new Error(
         `Failed to open Redragon keyboard at ${this.devicePath}: ${message}`,
+        err instanceof Error ? { cause: err } : undefined
       );
     }
   }
@@ -129,7 +129,9 @@ export class DeviceManager implements IDevice {
       this.device.sendFeatureReport(data);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      throw new Error(`USB sendFeatureReport failed: ${message}`);
+      throw new Error(`USB sendFeatureReport failed: ${message}`, {
+        cause: err,
+      });
     }
   }
 
@@ -170,10 +172,7 @@ export class DeviceManager implements IDevice {
    *
    * @param onReconnect called whenever the device reconnects (optional)
    */
-  startWatch(
-    onReconnect?: (label: string) => void,
-    intervalMs = 2000,
-  ): void {
+  startWatch(onReconnect?: (label: string) => void, intervalMs = 2000): void {
     this.stopWatch();
     this.watchCallback = () => {
       if (this.isConnected()) return; // already connected

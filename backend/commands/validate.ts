@@ -38,6 +38,7 @@ export function validateMessage(raw: unknown): WsMessage | string {
     case 'get_layout':
     case 'reset':
     case 'profile_list':
+    case 'stop_effect':
       return { type: msg.type } as WsMessage;
 
     case 'set_key_color': {

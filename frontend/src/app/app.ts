@@ -3,6 +3,7 @@ import { KeyboardComponent } from './components/keyboard/keyboard.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { ProfilesComponent } from './components/profiles/profiles.component';
 import { StatusBarComponent } from './components/status-bar/status-bar.component';
+import { OnboardingBannerComponent } from './components/onboarding-banner/onboarding-banner.component';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ import { StatusBarComponent } from './components/status-bar/status-bar.component
     ToolbarComponent,
     ProfilesComponent,
     StatusBarComponent,
+    OnboardingBannerComponent,
   ],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],

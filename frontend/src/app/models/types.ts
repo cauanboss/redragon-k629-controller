@@ -33,7 +33,13 @@ export interface KeyColorMessage {
 
 export interface EffectActiveMessage {
   type: 'effect_active';
-  effect: string;
+  effect: string | null;
+}
+
+export interface DeviceStatusMessage {
+  type: 'device_status';
+  connected: boolean;
+  label?: string | null;
 }
 
 export interface ProfileDataMessage {
@@ -72,6 +78,7 @@ export type ServerMessage =
   | LayoutMessage
   | KeyColorMessage
   | EffectActiveMessage
+  | DeviceStatusMessage
   | ProfileListMessage
   | ProfileDataMessage
   | ProfileSavedMessage

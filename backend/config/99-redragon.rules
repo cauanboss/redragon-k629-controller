@@ -1,5 +1,7 @@
-# Redragon K629CGO-PRO-M — modo USB (wired)
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="258a", ATTRS{idProduct}=="0049", MODE="0660", GROUP="plugdev"
+# Redragon keyboards — mode USB (wired)
+# Matches all known models (K629, K530, K552, K556, K582, K585, K587, K599, K618, etc.)
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="258a", MODE="0660", GROUP="plugdev"
 
-# Redragon K629CGO-PRO-M — modo 2.4GHz wireless (dongle Compx)
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="25a7", ATTRS{idProduct}=="fa70", MODE="0660", GROUP="plugdev"
+# Redragon keyboards — mode 2.4GHz wireless (Compx dongle)
+# Matches all known wireless models
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="25a7", MODE="0660", GROUP="plugdev"

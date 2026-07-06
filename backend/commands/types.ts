@@ -14,6 +14,7 @@ export type WsMessage =
   | { type: 'set_brightness'; level: number }
   | { type: 'set_speed'; level: number }
   | { type: 'apply_effect'; effect: string; params?: Record<string, number> }
+  | { type: 'stop_effect' }
   | { type: 'profile_save'; name: string; profile: Record<string, unknown> }
   | { type: 'profile_load'; name: string }
   | { type: 'profile_list' }

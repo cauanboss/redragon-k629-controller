@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Redragon K629 Controller
+Comment=Controle RGB per-key para teclados Redragon SH68F90A
+Exec=redragon-controller
+Icon=redragon-controller
+Terminal=false
+Categories=Utility;Settings;
+StartupNotify=true

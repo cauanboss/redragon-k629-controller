@@ -151,7 +151,8 @@ const LAYOUT: RowDef[] = [
       { id: 'p', label: 'P', width: 1 },
       { id: 'k659', label: '[', width: 1 },
       { id: 'k186', label: ']', width: 1 },
-      { id: 'k610', label: '\\', width: 1 }, null,
+      { id: 'k610', label: '\\', width: 1 },
+      { id: 'k191', label: '|', width: 1 }, null,
       { id: 'del', label: 'Del', width: 1 },
       { id: 'end', label: 'End', width: 1 },
       { id: 'pgdn', label: 'PgDn', width: 1 },
@@ -174,6 +175,7 @@ const LAYOUT: RowDef[] = [
       { id: 'k832', label: ';', width: 1 },
       { id: 'k15', label: "'", width: 1 },
       { id: 'enter', label: 'Enter', width: 2.25 },
+      { id: 'ç', label: 'Ç', width: 1 },
     ],
   },
 

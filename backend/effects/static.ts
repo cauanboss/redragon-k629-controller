@@ -1,12 +1,14 @@
 import type { RGBColor } from '../color.js';
 import type { IEffect } from '../effect.js';
-import { KeyInfo } from '../layout.js';
+import type { KeyInfo } from '../layout.js';
+
+const DEFAULT_STATIC_COLOR: RGBColor = { r: 255, g: 100, b: 0 };
 
 export class StaticEffect implements IEffect {
   readonly name = 'static';
-  readonly description = 'Static solid color on all keys';
+  readonly description = 'Solid color on all keys (host-driven)';
 
-  private color: RGBColor = { r: 255, g: 0, b: 0 };
+  private color: RGBColor = { ...DEFAULT_STATIC_COLOR };
 
   setColor(color: RGBColor): void {
     this.color = { ...color };

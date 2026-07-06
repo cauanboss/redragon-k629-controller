@@ -1,10 +1,10 @@
 import type { RGBColor } from '../color.js';
 import type { IEffect } from '../effect.js';
-import { KeyInfo } from '../layout.js';
+import type { KeyInfo } from '../layout.js';
 
 export class RainbowEffect implements IEffect {
   readonly name = 'rainbow';
-  readonly description = 'Rainbow wave that scrolls across the keyboard';
+  readonly description = 'Animated rainbow across keys (host-driven)';
 
   getColorAt(key: KeyInfo, step: number, _time: number): RGBColor {
     const hue = ((key.position.row * 6 + key.position.col) * 15 + step) % 360;

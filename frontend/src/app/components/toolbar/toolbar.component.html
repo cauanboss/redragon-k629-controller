@@ -1,14 +1,16 @@
 <div id="toolbar">
-  <div class="toolbar-group" id="effect-group">
+  <div class="toolbar-group effect-scroll-group">
     <span class="group-label">Effects</span>
-    <button
-      *ngFor="let effect of effects"
-      class="btn btn-effect"
-      [class.btn-active]="isEffectActive(effect.id)"
-      (click)="onEffectClick(effect.id)"
-    >
-      {{ effect.label }}
-    </button>
+    <div class="effect-scroll">
+      <button
+        *ngFor="let effect of effects"
+        class="btn btn-effect"
+        [class.btn-active]="isEffectActive(effect.id)"
+        (click)="onEffectClick(effect.id)"
+      >
+        {{ effect.label }}
+      </button>
+    </div>
   </div>
 
   <div class="toolbar-group">
@@ -33,7 +35,7 @@
         type="range"
         [value]="speed"
         min="0"
-        max="5"
+        max="10"
         step="1"
         (input)="speed = +$any($event.target).value; onSpeedChange()"
       />
@@ -56,8 +58,11 @@
       Apply to Selected
     </button>
     <button class="btn" (click)="onClearSelection()">Clear Sel</button>
+    <button class="btn" (click)="onStopEffect()" [disabled]="!currentEffect">
+      Stop Effect
+    </button>
     <span class="selection-info" *ngIf="selectedKeyCount > 0">
-      {{ selectedKeyCount }} key(s) selected
+      {{ selectedKeyCount }} key(s)
     </span>
     <button class="btn btn-danger" (click)="onReset()">Reset</button>
   </div>

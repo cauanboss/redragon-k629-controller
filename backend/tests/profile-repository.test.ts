@@ -4,6 +4,7 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { FileProfileRepository } from '../infrastructure/profile-store.js';
 import { BUILTIN_PROFILE_NAMES } from '../infrastructure/builtin-profiles.js';
+import { BUILTIN_COLORS } from '../infrastructure/builtin-profiles-data.js';
 
 describe('FileProfileRepository', () => {
   let tempDir: string;
@@ -129,7 +130,43 @@ describe('FileProfileRepository with built-in profiles', () => {
     expect(repository.load('matrix (custom)')?.colors.a).toEqual({ r: 4, g: 5, b: 6 });
   });
 
-  it('returns undefined when loading a builtin name that has no user data', () => {
-    expect(repository.load('nord')).toBeUndefined();
+  it('returns builtin color data when loading a builtin name with no user override', () => {
+    const loaded = repository.load('nord');
+    expect(loaded).toBeDefined();
+    expect(loaded!.name).toBe('nord');
+    expect(loaded!.builtin).toBe(true);
+    expect(loaded!.colors).toEqual(BUILTIN_COLORS['nord']);
+  });
+
+  it('returns builtin data for all 8 builtin profile names', () => {
+    for (const name of BUILTIN_PROFILE_NAMES) {
+      const loaded = repository.load(name);
+      expect(loaded).toBeDefined();
+      expect(loaded!.name).toBe(name);
+      expect(loaded!.builtin).toBe(true);
+      expect(loaded!.colors).toEqual(BUILTIN_COLORS[name]);
+    }
+  });
+
+  it('returns user-stored profile when loading a non-builtin name', () => {
+    repository.save({ name: 'my-custom', colors: { esc: { r: 1, g: 2, b: 3 } } });
+    const loaded = repository.load('my-custom');
+    expect(loaded).toBeDefined();
+    expect(loaded!.colors.esc).toEqual({ r: 1, g: 2, b: 3 });
+  });
+
+  it('returns builtin data when user saved with builtin name (copy-on-write)', () => {
+    // Save with a builtin name — copy-on-write creates "nord (custom)", not "nord"
+    repository.save({ name: 'nord', colors: { esc: { r: 1, g: 2, b: 3 } } });
+    // Loading "nord" still returns the builtin data, not the custom copy
+    const loaded = repository.load('nord');
+    expect(loaded).toBeDefined();
+    expect(loaded!.builtin).toBe(true);
+    expect(loaded!.colors.esc).toEqual(BUILTIN_COLORS['nord'].esc);
+    // The custom copy is accessible under the renamed name
+    const custom = repository.load('nord (custom)');
+    expect(custom).toBeDefined();
+    expect(custom!.colors.esc).toEqual({ r: 1, g: 2, b: 3 });
+    expect(custom!.builtin).toBe(false);
   });
 });

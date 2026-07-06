@@ -6,11 +6,12 @@
         *ngIf="item !== null"
         class="key"
         [class.key-selected]="isKeySelected(item.id)"
+        [class.key-visual-only]="!isKeyControllable(item.id)"
         [class.has-color]="keyColors.has(item.id)"
         [style.width.px]="item.width * KEY_UNIT"
         [style.height.px]="KEY_HEIGHT"
         [style.background-color]="getKeyColor(item.id) || undefined"
-        [title]="item.label"
+        [title]="isKeyControllable(item.id) ? item.label : item.label + ' (no LED)'"
         (click)="onKeyClick(item.id, $event)"
       >
         <span class="key-label">{{ item.label }}</span>

@@ -2,6 +2,7 @@ import {
   createApplicationFromEnv,
   type Application,
 } from './factory/app-factory.js';
+import './effects/index.js';
 
 let app: Application | null = null;
 
@@ -20,9 +21,14 @@ try {
     console.log('✓ Keyboard connected');
   } else {
     console.log('! Keyboard not found — connect it or check udev rules');
-    console.log('  USB IDs expected: 258a:0049 (wired) / 25a7:fa70 (wireless)');
-    console.log('  Web UI will start, but keyboard commands require a device.');
+    console.log('  Auto-reconnect watcher active — plug in the keyboard at any time.');
   }
+
+  // Enable auto-reconnect on USB unplug/replug
+  app.startAutoReconnect(() => {
+    console.log('✓ Keyboard reconnected');
+    app!.server.notifyDeviceReconnected();
+  });
 
   app.server.start();
 

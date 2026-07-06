@@ -3,6 +3,7 @@ import { homedir } from 'os';
 import { resolve } from 'path';
 import type { IProfileRepository, StoredProfile } from '../ports/iprofile-repository.js';
 import { BUILTIN_PROFILE_NAMES } from './builtin-profiles.js';
+import { BUILTIN_COLORS } from './builtin-profiles-data.js';
 
 export type { StoredProfile } from '../ports/iprofile-repository.js';
 
@@ -60,7 +61,15 @@ export class FileProfileRepository implements IProfileRepository {
     // User-stored profiles take precedence (they may override builtins)
     const userProfile = this.readAll().find(p => p.name === name);
     if (userProfile) return userProfile;
-    // Builtin data is loaded externally; return undefined if not found
+
+    // Fallback to built-in color data
+    if (this.builtinNames.has(name)) {
+      const colors = BUILTIN_COLORS[name];
+      if (colors) {
+        return { name, colors, builtin: true };
+      }
+    }
+
     return undefined;
   }
 

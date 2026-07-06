@@ -39,6 +39,15 @@ const DIR_ANGULAR = path.resolve(__dirname, '../dist/angular');
 const WEB_DIRS = [DIR_ANGULAR, DIR_HERE, DIR_DIST].filter((dir) => existsSync(dir));
 const WEB_DIR = WEB_DIRS[0] || DIR_HERE;
 
+/** Commands allowed when the keyboard USB device is not connected. */
+const OFFLINE_ALLOWED = new Set([
+  'get_layout',
+  'profile_list',
+  'profile_save',
+  'profile_delete',
+  'stop_effect',
+]);
+
 export interface UIServerOptions {
   port?: number;
   host?: string;
@@ -124,6 +133,25 @@ export class UIServer implements IObserver<ServerEvent> {
     this.server.close();
   }
 
+  /** Broadcast keyboard USB connection state to all WebSocket clients. */
+  broadcastDeviceStatus(): void {
+    this.broadcast({
+      type: 'device_status',
+      connected: this.controller.isConnected(),
+      label: this.controller.getDeviceLabel(),
+    });
+  }
+
+  /** Notify clients after USB reconnect — status + layout refresh. */
+  notifyDeviceReconnected(): void {
+    this.broadcastDeviceStatus();
+    for (const client of this.wss.clients) {
+      if (client.readyState === WebSocket.OPEN) {
+        this.sendLayout(client);
+      }
+    }
+  }
+
   /**
    * Observer pattern — called by the Subject<ServerEvent>.
    * Routes events to the current WebSocket client.
@@ -146,6 +174,8 @@ export class UIServer implements IObserver<ServerEvent> {
 
   private setupWebSocket(): void {
     this.wss.on('connection', (ws: WebSocket) => {
+      this.sendDeviceStatus(ws);
+
       if (this.controller.isConnected()) {
         this.sendLayout(ws);
       }
@@ -182,10 +212,10 @@ export class UIServer implements IObserver<ServerEvent> {
 
       const message: WsMessage = validated;
 
-      if (!this.controller.isConnected()) {
+      if (!this.controller.isConnected() && !OFFLINE_ALLOWED.has(message.type)) {
         this.eventSubject.notify({
           kind: 'error',
-          message: 'Controller is not connected to the keyboard',
+          message: 'Teclado não conectado. Instale as regras udev e reconecte o USB.',
         });
         return;
       }
@@ -209,6 +239,14 @@ export class UIServer implements IObserver<ServerEvent> {
   private sendLayout(ws: WebSocket): void {
     const keys = this.controller.getLayout().toJSON();
     ws.send(JSON.stringify({ type: 'layout', keys }));
+  }
+
+  private sendDeviceStatus(ws: WebSocket): void {
+    ws.send(JSON.stringify({
+      type: 'device_status',
+      connected: this.controller.isConnected(),
+      label: this.controller.getDeviceLabel(),
+    }));
   }
 
   private send(ws: WebSocket, data: Record<string, unknown>): void {

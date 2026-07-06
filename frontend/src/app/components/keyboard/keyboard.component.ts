@@ -19,6 +19,7 @@ export class KeyboardComponent implements OnInit, OnDestroy {
   layout: RowDef[] = LAYOUT;
   keyColors = new Map<string, RGBColor>();
   selectedKeys = new Set<string>();
+  validKeyIds = new Set<string>();
 
   private subs: Subscription[] = [];
 
@@ -33,6 +34,11 @@ export class KeyboardComponent implements OnInit, OnDestroy {
     this.subs.push(
       this.state.selectedKeys$.subscribe((keys) => {
         this.selectedKeys = keys;
+      })
+    );
+    this.subs.push(
+      this.state.validKeyIds$.subscribe((ids) => {
+        this.validKeyIds = ids;
       })
     );
   }
@@ -57,6 +63,10 @@ export class KeyboardComponent implements OnInit, OnDestroy {
 
   isKeySelected(keyId: string): boolean {
     return this.selectedKeys.has(keyId);
+  }
+
+  isKeyControllable(keyId: string): boolean {
+    return this.validKeyIds.has(keyId);
   }
 
   trackByIndex(index: number): number {

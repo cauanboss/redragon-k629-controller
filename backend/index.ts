@@ -43,6 +43,7 @@ export {
   saveProfile,
 } from './infrastructure/profile-store.js';
 export { BUILTIN_PROFILE_NAMES, isBuiltin } from './infrastructure/builtin-profiles.js';
+export { BUILTIN_COLORS } from './infrastructure/builtin-profiles-data.js';
 export {
   createApplication,
   createApplicationFromEnv,

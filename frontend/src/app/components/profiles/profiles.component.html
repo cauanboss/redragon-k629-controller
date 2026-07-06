@@ -11,7 +11,7 @@
         {{ profile.builtin ? '🔒 ' : '' }}{{ profile.name }}
       </option>
     </select>
-    <button class="btn" (click)="onLoad()">Load</button>
+    <button class="btn" (click)="onLoad()" [disabled]="!selectedProfile">Load</button>
     <input
       type="text"
       class="profile-name-input"

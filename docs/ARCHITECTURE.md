@@ -45,7 +45,7 @@ Este documento descreve a refatoração arquitetural do **redragon-k629-controll
 
 ### Facade — `Controller`
 
-**Arquivo:** `src/controller.ts`
+**Arquivo:** `backend/controller.ts`
 
 Orquestra device, protocolo, layout e efeitos. CLI, servidor e `EffectRunner` falam apenas com o `Controller`, sem conhecer HID ou frames.
 
@@ -71,9 +71,9 @@ interface ControllerDependencies {
 ### Ports & Adapters + Adapter — `ports/` e `DeviceManager`
 
 **Arquivos:**
-- `src/ports/idevice.ts` — interface USB
-- `src/ports/iprofile-repository.ts` — interface de perfis
-- `src/device.ts` — `DeviceManager implements IDevice`
+- `backend/ports/idevice.ts` — interface USB
+- `backend/ports/iprofile-repository.ts` — interface de perfis
+- `backend/device.ts` — `DeviceManager implements IDevice`
 
 O `Controller` depende de `IDevice`, não de `node-hid`. Em testes, basta passar um mock:
 
@@ -93,9 +93,9 @@ new Controller({ device });
 ### Strategy — efeitos host-driven e firmware
 
 **Arquivos:**
-- `src/effect.ts` — `IEffect` (host-driven: `getColorAt`)
-- `src/effects/static.ts`, `rainbow.ts`, `wave.ts` — implementações
-- `src/effects/dispatcher.ts` — `IEffectStrategy` para modos firmware
+- `backend/effect.ts` — `IEffect` (host-driven: `getColorAt`)
+- `backend/effects/static.ts`, `rainbow.ts`, `wave.ts` — implementações
+- `backend/effects/dispatcher.ts` — `IEffectStrategy` para modos firmware
 
 O **EffectDispatcher** escolhe a estratégia correta:
 
@@ -120,9 +120,9 @@ defaultEffectDispatcher.apply('rainbow', controller, {
 
 ### Registry — catálogo de efeitos host-driven
 
-**Arquivo:** `src/effects/registry.ts`
+**Arquivo:** `backend/effects/registry.ts`
 
-Mapa extensível de efeitos. Registro no boot em `src/effects/index.ts`:
+Mapa extensível de efeitos. Registro no boot em `backend/effects/index.ts`:
 
 ```typescript
 import { registerEffect } from './registry.js';
@@ -135,7 +135,7 @@ registerEffect(new MyCustomEffect());
 
 ### Template Method — burst firmware
 
-**Arquivo:** `src/patterns/firmware-burst.ts`
+**Arquivo:** `backend/patterns/firmware-burst.ts`
 
 Antes, `Controller` repetia o loop `for (buf of buffers) sendFeatureReport(buf)` em `applyFirmwareStatic` e `applyFirmwareRainbow`.
 
@@ -164,9 +164,9 @@ Para um novo modo firmware, crie outra subclasse de `FirmwareBurstOperation`.
 ### Command — mensagens WebSocket
 
 **Arquivos:**
-- `src/commands/types.ts` — `ICommand`, `CommandContext`
-- `src/commands/keyboard.commands.ts` — um comando por ação
-- `src/commands/registry.ts` — `CommandRegistry.dispatch()`
+- `backend/commands/types.ts` — `ICommand`, `CommandContext`
+- `backend/commands/keyboard.commands.ts` — um comando por ação
+- `backend/commands/registry.ts` — `CommandRegistry.dispatch()`
 
 Cada mensagem JSON `{ type: "..." }` vira um comando:
 
@@ -199,7 +199,7 @@ registry.register(new MyCommand());
 
 ### Observer — eventos do servidor
 
-**Arquivo:** `src/observer/server-events.ts`
+**Arquivo:** `backend/observer/server-events.ts`
 
 Comandos não enviam WebSocket diretamente. Retornam `CommandResult` com eventos:
 
@@ -221,8 +221,8 @@ A classe `Subject<T>` também está disponível para cenários de pub/sub mais g
 ### Repository — perfis salvos
 
 **Arquivos:**
-- `src/ports/iprofile-repository.ts` — interface
-- `src/infrastructure/profile-store.ts` — `FileProfileRepository`
+- `backend/ports/iprofile-repository.ts` — interface
+- `backend/infrastructure/profile-store.ts` — `FileProfileRepository`
 
 Persiste em `~/.config/redragon-k629/profiles.json`.
 
@@ -241,7 +241,7 @@ A API legada (`saveProfile`, `loadProfile`, …) continua funcionando via `defau
 
 ### Decorator — `LoggingDeviceDecorator`
 
-**Arquivo:** `src/decorators/logging-device.ts`
+**Arquivo:** `backend/decorators/logging-device.ts`
 
 Envolve qualquer implementação de `IDevice` para adicionar logging transparente nas chamadas USB. Útil para depuração de protocolo sem modificar o código do adapter ou do controller.
 
@@ -285,7 +285,7 @@ const device = new LoggingDeviceDecorator(
 
 ### Factory — composição da aplicação
 
-**Arquivo:** `src/factory/app-factory.ts`
+**Arquivo:** `backend/factory/app-factory.ts`
 
 Centraliza a montagem de `Controller` + `UIServer`:
 
@@ -366,13 +366,13 @@ Antes montava objetos manualmente. Agora:
 | `tests/firmware-burst.test.ts`  | Template Method (5 frames por burst) |
 | `tests/app-factory.test.ts`     | Factory + injeção de device          |
 
-Total atual: **122 testes** (`pnpm test`).
+Total atual: **176 testes** (`pnpm test`).
 
 ---
 
 ## Exports públicos
 
-Tudo disponível via `src/index.ts`:
+Tudo disponível via `backend/index.ts`:
 
 ```typescript
 import {
@@ -392,17 +392,17 @@ import {
 ### Plugin System — efeitos carregados de terceiros
 
 **Arquivos:**
-- `src/effects/plugin-loader.ts` — varre `plugins/`, importa módulos e registra efeitos
-- `src/effects/plugins/` — diretório onde usuários colocam `.ts` ou `.js`
+- `backend/effects/plugin-loader.ts` — varre `plugins/`, importa módulos e registra efeitos
+- `backend/effects/plugins/` — diretório onde usuários colocam `.ts` ou `.js`
 
-O plugin loader é chamado automaticamente durante o boot em `src/effects/index.ts`.
+O plugin loader é chamado automaticamente durante o boot em `backend/effects/index.ts`.
 Qualquer módulo no diretório `plugins/` que exporte um objeto implementando `IEffect`
 (com `name`, `description` e `getColorAt`) é registrado no registry de efeitos.
 
 **Exemplo — criando um plugin:**
 
 ```typescript
-// src/effects/plugins/red-flash.ts
+// backend/effects/plugins/red-flash.ts
 import type { KeyInfo, RGBColor, IEffect } from '../../effect.js';
 
 export class RedFlashEffect implements IEffect {
@@ -417,11 +417,45 @@ export class RedFlashEffect implements IEffect {
 }
 ```
 
-Após colocar o arquivo em `src/effects/plugins/`, o efeito `red-flash` estará
+Após colocar o arquivo em `backend/effects/plugins/`, o efeito `red-flash` estará
 disponível via CLI (`redragon effect red-flash`) e WebSocket.
 
 > **Nota:** Plugins são carregados apenas uma vez durante a inicialização.
 > É necessário reiniciar o processo para detectar novos plugins.
+
+---
+
+### IEffectLifecycle — `backend/effect.ts`
+
+**Arquivo:** `backend/effect.ts`
+
+```typescript
+export interface IEffectLifecycle {
+  onStart(): void;
+  onStop(): void;
+}
+
+export function hasLifecycle(effect: IEffect): effect is IEffect & IEffectLifecycle;
+```
+
+Efeitos que precisam de setup/teardown (áudio, evdev) implementam `IEffectLifecycle`. O `EffectRunner` chama `onStart()` no `start()` e `onStop()` no `stop()`. Efeitos como `AudioVisualizerEffect` e `TypingReactiveEffect` usam isso.
+
+---
+
+### IInputReader (Port) — `backend/ports/iinput-reader.ts`
+
+Port para leitura de eventos de teclado. Implementado pelo `EvdevInputReader` (adapter em `backend/input/evdev-reader.ts`). Usado pelo `TypingReactiveEffect` para detectar teclas pressionadas.
+
+---
+
+### Tauri — `frontend/src-tauri/`
+
+Wrapper nativo (GTK) para o frontend Angular. Inclui:
+- Janela nativa GTK com o frontend Angular embedado
+- Tray icon com menu Show/Quit
+- Sidecar Node.js que spawna o backend na porta 3000
+- Close-to-tray (fechar minimiza pra bandeja; `prevent_close` + hide)
+- Build de produção embute `dist/` (backend compilado) como resource do bundle
 
 ---
 
@@ -432,17 +466,18 @@ Itens identificados na revisão de código, ainda não implementados:
 1. ~~**IDs das teclas na web UI** — `web/app.ts` usa IDs diferentes de `layout.ts`; algumas teclas não acendem pelo grid visual.~~ *(Fix applied: key IDs in web LAYOUT now match layout.ts; unknown keys are filtered via `validKeyIds`.)*
 2. ~~**CLI `disconnect`** — cada invocação cria um `Controller` novo (não mantém estado entre processos).~~ *(Removed — disconnect happens on process exit.)*
 3. ~~**Arquivo LICENSE** — README declara MIT, mas o arquivo ainda não existe.~~ *(Created.)*
-4. **Autenticação WebSocket** — servidor sem token; seguro apenas em loopback.
-5. **Validação de payload** — cores e key IDs sem schema runtime.
+4. ~~**Validação de payload** — cores e key IDs sem schema runtime.~~ *(Implementado em `backend/commands/validate.ts`.)*
+5. **Autenticação WebSocket** — servidor sem token; seguro apenas em loopback.
+6. **Teclas só visuais no grid** — `scrlk`, `rshift` e `menu` aparecem na UI Angular mas não têm LED na matriz física (85 keys). Clicar nelas não altera o teclado.
 
 ## Utilitários de cor compartilhados
 
-`src/color.ts` now exports `clampByte`, `clampNibble`, `hexToRgb`, and `rgbToHex`.
-These were previously duplicated in `src/cli.ts` (local `hexToRgb`), `src/protocol.ts`
-(private `clampByte`/`clampNibble`), and `src/web/app.ts` (local `hexToRgb`/`rgbToHex`).
+`backend/color.ts` now exports `clampByte`, `clampNibble`, `hexToRgb`, and `rgbToHex`.
+These were previously duplicated in `backend/cli.ts` (local `hexToRgb`), `backend/protocol.ts`
+(private `clampByte`/`clampNibble`), and `backend/web/app.ts` (local `hexToRgb`/`rgbToHex`).
 
-- `src/cli.ts` and `src/protocol.ts` now import from `src/color.ts`.
-- `src/web/app.ts` retains local copies because it's a separate browser-side bundle.
+- `backend/cli.ts` and `backend/protocol.ts` now import from `backend/color.ts`.
+- `backend/web/app.ts` retains local copies because it's a separate browser-side bundle.
 
 ---
 

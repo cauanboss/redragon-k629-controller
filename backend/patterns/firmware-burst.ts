@@ -52,10 +52,6 @@ export class StaticFirmwareBurst extends FirmwareBurstOperation {
     super(device, frameBuilder);
   }
 
-  protected beforeExecute(): void {
-    this.sendClearFrame();
-  }
-
   protected buildFrames(): Buffer[] {
     return this.frameBuilder!.buildFirmwareEffectFrame(
       FIRMWARE_EFFECTS.STATIC,
@@ -80,10 +76,6 @@ export class GenericFirmwareBurst extends FirmwareBurstOperation {
     private readonly genSpeed: number,
   ) { super(device, frameBuilder); }
 
-  protected beforeExecute(): void {
-    this.sendClearFrame();
-  }
-
   protected buildFrames(): Buffer[] {
     return this.frameBuilder!.buildFirmwareEffectFrame(this.mode, this.genColor, this.genBrightness, this.genSpeed);
   }
@@ -98,10 +90,6 @@ export class RainbowFirmwareBurst extends FirmwareBurstOperation {
     private readonly rainbowSpeed: number,
   ) {
     super(device, frameBuilder);
-  }
-
-  protected beforeExecute(): void {
-    this.sendClearFrame();
   }
 
   protected buildFrames(): Buffer[] {

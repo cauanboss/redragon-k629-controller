@@ -5,10 +5,10 @@ Software para controle do teclado mecânico **Redragon K629CGO-PRO-M** (tri-mode
 ## Funcionalidades
 
 - Controle RGB per-key (cada tecla individualmente)
-- Efeitos firmware nativos (static, rainbow, wave) — rodam no MCU do teclado
-- Efeitos host-driven (streaming de frames via USB)
+- Efeitos host-driven (streaming de frames via USB a 30 fps)
+- Efeitos firmware documentados, mas **não funcionam no K629CGO-PRO-M** — ver [docs/FIRMWARE-EFFECTS.md](docs/FIRMWARE-EFFECTS.md)
 - CLI para scripts e automação
-- Interface web com grid visual do teclado TKL
+- Interface Angular com grid visual do teclado 75% ABNT2
 - Detecção automática dos modos wired (258a:0049) e wireless (25a7:fa70)
 
 ## Arquitetura
@@ -17,7 +17,7 @@ Documentação completa dos padrões de projeto, camadas e como estender o códi
 **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**
 
 ```
-src/
+backend/
 ├── ports/                # Interfaces (Hexagonal / DIP)
 │   ├── idevice.ts        #   Port USB HID
 │   └── iprofile-repository.ts
@@ -58,12 +58,51 @@ src/
 | **Template Method** | `patterns/firmware-burst.ts` | Algoritmo fixo de burst firmware; subclasses definem frames |
 | **Factory** | `factory/app-factory.ts` | Monta Controller + UIServer + dependências |
 | **Decorator** | `decorators/logging-device.ts` | Logging transparente de chamadas USB HID via `IDevice` |
+| **Tauri** | `frontend/src-tauri/` | Janela nativa GTK + tray icon + sidecar backend |
 
 ## Pré-requisitos
 
 - **Node.js** ≥ 18
 - **pnpm** (instalar com `npm install -g pnpm`)
 - **Teclado Redragon K629CGO-PRO-M** conectado via USB
+
+## Quick Start
+
+```bash
+# Terminal 1 — backend
+pnpm dev:server
+
+# Terminal 2 — Angular dev server
+pnpm dev:frontend
+
+# Or both at once
+pnpm dev:all
+
+# Open http://localhost:4200
+```
+
+## Desktop App (Tauri)
+
+```bash
+# Dev mode with hot-reload
+pnpm tauri:dev
+
+# Production build (compila backend + frontend + bundle/backend para o Tauri)
+pnpm tauri:build
+# output: frontend/src-tauri/target/release/bundle/
+# Requer Node.js >= 18 no PATH na máquina do usuário final
+```
+
+## Compatibilidade
+
+| Modelo | Chipset | Wired | Wireless (2.4G) |
+|---|---|---|---|
+| K629CGO-PRO-M | SH68F90A | ✅ | ✅ |
+| K530 Draconic | SH68F90A | ✅ | ✅ |
+| K599 Deimos | SH68F90A | ✅ | ✅ |
+| K618 Horus | SH68F90A | ✅ | ✅ |
+
+Modelos com chipset Sonix/EVision (K552, K556, K582, K585, K587) não são suportados.
 
 ## Instalação
 
@@ -73,27 +112,30 @@ cd redragon-k629-controller
 pnpm install
 
 # Permissão USB (necessário uma vez)
-sudo cp config/99-redragon.rules /etc/udev/rules.d/
-sudo udevadm control --reload-rules
+bash scripts/install-udev.sh
+# ou manualmente:
+# sudo cp backend/config/99-redragon.rules /etc/udev/rules.d/
+# sudo udevadm control --reload-rules
 ```
 
 Desconecte e reconecte o cabo USB do teclado após aplicar as regras.
 
 ## Uso
 
-### Interface web
+### Interface web (Angular)
 
 ```bash
-pnpm dev
-# Abrir http://localhost:3000
+# Recomendado — backend + frontend juntos
+pnpm dev:all
+# Abrir http://localhost:4200
 ```
 
-Grid visual do teclado TKL com:
-- Clique em cada tecla → color picker
-- Botões: Static, Rainbow, Wave
-- Sliders de brilho (0–5) e velocidade (0–5)
-- Aplicar cor única em todas as teclas
-- Botão Reset
+Alternativa manual: `pnpm dev:server` (porta 3000) + `pnpm dev:frontend` (porta 4200 com proxy WebSocket).
+
+Grid visual do teclado 75% ABNT2 com:
+- Clique em cada tecla → color picker (85 teclas com LED; `ScrLk`, `RShift` e `Menu` são só visuais)
+- Botões de efeito (firmware tenta MCU; host-driven funciona no K629)
+- Sliders de brilho e velocidade (0–10 na UI, convertidos para 0–4 no protocolo)
 
 ### CLI
 
@@ -118,9 +160,6 @@ pnpm dev:cli static aaff00 [brilho]
 
 # Conectar manualmente
 pnpm dev:cli connect
-
-# Desconectar
-pnpm dev:cli disconnect
 ```
 
 ### Produção (build)
@@ -137,12 +176,21 @@ Variáveis de ambiente opcionais: `PORT` (padrão 3000), `HOST` (padrão 127.0.0
 
 | Comando | Descrição |
 |---|---|
-| `pnpm dev` | Inicia servidor web (tsx) |
-| `pnpm dev:server` | Idem |
+| `pnpm dev:server` | Inicia servidor backend (tsx) |
+| `pnpm dev:frontend` | Angular dev server (localhost:4200) |
+| `pnpm dev:all` | Backend + frontend simultaneamente |
 | `pnpm dev:cli` | CLI (tsx) |
-| `pnpm build` | Compila TypeScript para dist/ |
-| `pnpm test` | Roda 122 testes unitários |
+| `pnpm dev` | Atalho para `pnpm dev:server` |
+| `pnpm build` | Compila backend + frontend + `bundle/backend` para Tauri |
+| `pnpm bundle:backend` | Gera `bundle/backend/` (dist + node_modules) |
+| `pnpm build:backend` | Compila apenas o backend |
+| `pnpm build:frontend` | Compila apenas o frontend |
+| `pnpm start` | Node produção (dist/start-server.js) |
+| `pnpm cli` | CLI compilada |
+| `pnpm test` | Roda 178 testes unitários |
 | `pnpm test:watch` | Testes em watch mode |
+| `pnpm tauri:dev` | Tauri dev mode com hot-reload |
+| `pnpm tauri:build` | Produção Tauri desktop app |
 
 ## Protocolo
 
@@ -185,7 +233,7 @@ Burst de **5 feature reports** (cada 1032 bytes):
 
 | Problema | Causa | Solução |
 |---|---|---|
-| `Could not connect` | Sem permissão USB | `sudo cp config/99-redragon.rules /etc/udev/rules.d/` + reconectar |
+| `Could not connect` | Sem permissão USB | `sudo cp backend/config/99-redragon.rules /etc/udev/rules.d/` + reconectar |
 | `No matching version found` | Versão do @types errada | Rodar `pnpm install --no-frozen-lockfile` |
 | Module not found | Build desatualizado | `pnpm build` |
 | Teclado não acende | Modo wireless sem dongle | Conectar via USB ou parear o dongle 25a7:fa70 |
@@ -195,6 +243,8 @@ Burst de **5 feature reports** (cada 1032 bytes):
 | Documento | Conteúdo |
 |---|---|
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Padrões de projeto, camadas, como estender |
+| [docs/FIRMWARE-EFFECTS.md](docs/FIRMWARE-EFFECTS.md) | Diagnóstico dos efeitos firmware no K629 |
+| [docs/PRODUCTION-READINESS.md](docs/PRODUCTION-READINESS.md) | Roadmap release, checklist v1.0, melhorias de UI |
 | [docs/CHANGELOG.md](docs/CHANGELOG.md) | Histórico das mudanças arquiteturais |
 
 ## Licença

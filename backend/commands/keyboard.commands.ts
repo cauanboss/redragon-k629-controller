@@ -65,7 +65,16 @@ export class ResetCommand implements ICommand {
   execute(context: CommandContext) {
     context.controller.stopEffect();
     context.controller.setAllColor({ r: 0, g: 0, b: 0 });
-    return { events: [] };
+    return broadcast({ type: 'effect_active', effect: null });
+  }
+}
+
+export class StopEffectCommand implements ICommand {
+  readonly type = 'stop_effect';
+
+  execute(context: CommandContext) {
+    context.controller.stopEffect();
+    return broadcast({ type: 'effect_active', effect: null });
   }
 }
 
@@ -176,8 +185,32 @@ export class ProfileLoadCommand implements ICommand {
       return error(`Profile "${name}" not found`);
     }
 
+    // Apply colors
     context.controller.applyColors(loaded.colors);
-    return send({ type: 'profile_data', name, profile: loaded });
+
+    // Restore stored effect if present
+    if (loaded.effect) {
+      const brightness = loaded.brightness ?? 3;
+      const speed = loaded.speed ?? 2;
+      context.effectDispatcher.apply(loaded.effect, context.controller, { brightness, speed });
+    }
+
+    // Restore brightness/speed into server settings
+    if (loaded.brightness !== undefined) {
+      context.settings.brightness = loaded.brightness;
+    }
+    if (loaded.speed !== undefined) {
+      context.settings.speed = loaded.speed;
+    }
+
+    return send({
+      type: 'profile_data',
+      name,
+      profile: loaded,
+      brightness: loaded.brightness,
+      speed: loaded.speed,
+      effect: loaded.effect,
+    });
   }
 }
 
@@ -227,6 +260,7 @@ export function createDefaultCommands(): ICommand[] {
     new ApplyEffectCommand(),
     new SetBrightnessCommand(),
     new SetSpeedCommand(),
+    new StopEffectCommand(),
     new ResetCommand(),
     new ProfileSaveCommand(),
     new ProfileLoadCommand(),

@@ -6,7 +6,7 @@
  */
 
 export const BUILTIN_PROFILE_NAMES: ReadonlySet<string> = new Set([
-  'gamming',
+  'gaming',
   'programmer',
   'synthwave',
   'matrix',

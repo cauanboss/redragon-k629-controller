@@ -1,13 +1,14 @@
 {
   "name": "redragon-k629-controller",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Software para controle do teclado Redragon K629CGO-PRO-M",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm build:backend && pnpm build:frontend",
-    "build:backend": "tsc && cp backend/web/index.html backend/web/style.css dist/web/",
-    "build:frontend": "pnpm --filter redragon-frontend build",
+    "build": "pnpm build:backend && pnpm build:frontend && pnpm bundle:backend",
+    "build:backend": "tsc",
+    "build:frontend": "pnpm --filter redragon-frontend build && mkdir -p dist/angular && cp -r frontend/dist/. dist/angular/",
+    "bundle:backend": "bash scripts/bundle-backend.sh",
     "start": "node dist/start-server.js",
     "cli": "node dist/cli.js",
     "dev": "tsx backend/start-server.ts",
@@ -15,6 +16,9 @@
     "dev:frontend": "pnpm --filter redragon-frontend start",
     "dev:all": "concurrently -n backend,frontend -c blue,green \"pnpm dev:server\" \"pnpm dev:frontend\"",
     "dev:cli": "tsx backend/cli.ts",
+    "tauri:dev": "pnpm --filter redragon-frontend tauri:dev",
+    "tauri:build": "pnpm --filter redragon-frontend tauri:build",
+    "tauri:icon": "pnpm --filter redragon-frontend tauri:icon",
     "test": "vitest run",
     "test:watch": "vitest"
   },

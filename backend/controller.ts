@@ -9,6 +9,7 @@ import { listEffects } from './effects/index.js';
 import {
   StaticFirmwareBurst,
   RainbowFirmwareBurst,
+  GenericFirmwareBurst,
 } from './patterns/firmware-burst.js';
 
 export interface ControllerDependencies {
@@ -84,17 +85,10 @@ export class Controller {
     this.applyColors({ [keyId]: color });
   }
 
-  applyFirmwareEffect(mode: number, color: RGBColor, brightness: number, speed: number): void {
+  /** Apply any firmware effect using a burst operation (Template Method). */
+  applyGenericFirmwareBurst(mode: number, color: RGBColor, brightness: number, speed: number): void {
     this.ensureConnected();
-    // Clear any previous per-key state by sending a black frame first.
-    // This ensures the MCU is listening for a new firmware burst.
-    const clearFrame = this.frameBuilder.buildPerKeyFrame(() => ({ r: 0, g: 0, b: 0 }));
-    this.deviceManager.sendFeatureReport(clearFrame);
-    // Small delay to let the MCU process the clear frame before the burst.
-    const frames = this.frameBuilder.buildFirmwareEffectFrame(mode, color, brightness, speed);
-    for (const frame of frames) {
-      this.deviceManager.sendFeatureReport(frame);
-    }
+    new GenericFirmwareBurst(this.deviceManager, this.frameBuilder, mode, color, brightness, speed).execute();
   }
 
   applyFirmwareStatic(color: RGBColor, brightness = 3): void {
@@ -133,6 +127,23 @@ export class Controller {
 
   listEffects(): string[] {
     return listEffects();
+  }
+
+  getDeviceLabel(): string | null {
+    if (!this.isConnected()) return null;
+    const dm = this.deviceManager as DeviceManager;
+    if (typeof dm.getLabel === 'function') {
+      return dm.getLabel();
+    }
+    return null;
+  }
+
+  /** Start watching for device reconnection (useful after USB unplug). */
+  startAutoReconnect(onReconnect?: (label: string) => void): void {
+    const dm = this.deviceManager as DeviceManager;
+    if (typeof dm.startWatch === 'function') {
+      dm.startWatch(onReconnect);
+    }
   }
 
   private ensureConnected(): void {

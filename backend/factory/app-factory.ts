@@ -21,6 +21,8 @@ export interface Application {
   connect(): boolean;
   start(): boolean;
   stop(): void;
+  /** Start polling for device reconnection (USB unplug/replug). */
+  startAutoReconnect(onReconnect?: (label: string) => void): void;
 }
 
 function readPort(): number {
@@ -71,6 +73,10 @@ export function createApplication(config: AppConfig = {}): Application {
     stop(): void {
       controller.disconnect();
       server.stop();
+    },
+
+    startAutoReconnect(onReconnect?: (label: string) => void): void {
+      controller.startAutoReconnect(onReconnect);
     },
   };
 }

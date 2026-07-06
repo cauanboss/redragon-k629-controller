@@ -75,6 +75,12 @@ importers:
       '@angular/router':
         specifier: ^19.0.0
         version: 19.2.25(@angular/common@19.2.25(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@19.2.25(@angular/animations@19.2.25(@angular/common@19.2.25(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@19.2.25(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@19.2.25(rxjs@7.8.2)(zone.js@0.15.1)))(rxjs@7.8.2)
+      '@tauri-apps/api':
+        specifier: ^2.0.0
+        version: 2.11.1
+      '@tauri-apps/plugin-shell':
+        specifier: ^2.0.0
+        version: 2.3.5
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
@@ -97,6 +103,60 @@ importers:
       typescript:
         specifier: ~5.7.0
         version: 5.7.3
+
+  frontend/src-tauri/target/debug/backend:
+    dependencies:
+      chalk:
+        specifier: ^5.4.0
+        version: 5.6.2
+      commander:
+        specifier: ^13.0.0
+        version: 13.1.0
+      express:
+        specifier: ^5.1.0
+        version: 5.2.1
+      node-hid:
+        specifier: ^3.1.0
+        version: 3.3.0
+      ws:
+        specifier: ^8.18.0
+        version: 8.21.0
+
+  frontend/src-tauri/target/release/backend:
+    dependencies:
+      chalk:
+        specifier: ^5.4.0
+        version: 5.6.2
+      commander:
+        specifier: ^13.0.0
+        version: 13.1.0
+      express:
+        specifier: ^5.1.0
+        version: 5.2.1
+      node-hid:
+        specifier: ^3.1.0
+        version: 3.3.0
+      ws:
+        specifier: ^8.18.0
+        version: 8.21.0
+
+  frontend/src-tauri/target/release/bundle/deb/Redragon K629 Controller_1.0.0_amd64/data/usr/lib/Redragon K629 Controller/backend:
+    dependencies:
+      chalk:
+        specifier: ^5.4.0
+        version: 5.6.2
+      commander:
+        specifier: ^13.0.0
+        version: 13.1.0
+      express:
+        specifier: ^5.1.0
+        version: 5.2.1
+      node-hid:
+        specifier: ^3.1.0
+        version: 3.3.0
+      ws:
+        specifier: ^8.18.0
+        version: 8.21.0
 
 packages:
 
@@ -2206,6 +2266,12 @@ packages:
   '@sindresorhus/merge-streams@2.3.0':
     resolution: {integrity: sha512-LtoMMhxAlorcGhmFYI+LhPgbPZCkgP6ra1YL604EeF6U98pLlQ3iWIGMdWSC+vWmPBWBNgmDBAhnAobLROJmwg==}
     engines: {node: '>=18'}
+
+  '@tauri-apps/api@2.11.1':
+    resolution: {integrity: sha512-M2FPuYND2m+wh5hfW9ZpSdxMPdEJovPBWwoHJmwUpysTYNHaOkVFN419m/K0LIgjb/7KU2vBgsUepJWugQCvAA==}
+
+  '@tauri-apps/plugin-shell@2.3.5':
+    resolution: {integrity: sha512-jewtULhiQ7lI7+owCKAjc8tYLJr92U16bPOeAa472LHJdgaibLP83NcfAF2e+wkEcA53FxKQAZ7byDzs2eeizg==}
 
   '@tufjs/canonical-json@2.0.0':
     resolution: {integrity: sha512-yVtV8zsdo8qFHe+/3kw81dSLyF7D576A5cCFCi4X7B39tWT7SekaEFUnvnWJHz+9qO7qJTah1JbrDjWKqFtdWA==}
@@ -6916,6 +6982,12 @@ snapshots:
       '@sigstore/protobuf-specs': 0.4.3
 
   '@sindresorhus/merge-streams@2.3.0': {}
+
+  '@tauri-apps/api@2.11.1': {}
+
+  '@tauri-apps/plugin-shell@2.3.5':
+    dependencies:
+      '@tauri-apps/api': 2.11.1
 
   '@tufjs/canonical-json@2.0.0': {}
 

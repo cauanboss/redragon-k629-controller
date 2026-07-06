@@ -14,6 +14,9 @@ export class KeyboardStateService implements OnDestroy {
   public validKeyIds$ = new BehaviorSubject<Set<string>>(new Set());
   public brightness$ = new BehaviorSubject<number>(10);
   public speed$ = new BehaviorSubject<number>(2);
+  public keyboardConnected$ = new BehaviorSubject<boolean>(false);
+  public keyboardLabel$ = new BehaviorSubject<string | null>(null);
+  public lastError$ = new BehaviorSubject<string | null>(null);
 
   private subscriptions: Subscription[] = [];
 
@@ -46,6 +49,10 @@ export class KeyboardStateService implements OnDestroy {
   }
 
   selectKey(keyId: string, ctrlKey: boolean): void {
+    if (!this.validKeyIds$.value.has(keyId)) {
+      return;
+    }
+
     const current = new Set(this.selectedKeys$.value);
     if (ctrlKey) {
       if (current.has(keyId)) {
@@ -98,10 +105,11 @@ export class KeyboardStateService implements OnDestroy {
       this.ws.sendMessage({ type: 'set_colors', colors });
     }
 
-    // Update local display with full-brightness color (for preview)
     const currentColors = new Map(this.keyColors$.value);
     for (const keyId of selected) {
-      currentColors.set(keyId, color);
+      if (validKeyIds.has(keyId)) {
+        currentColors.set(keyId, color);
+      }
     }
     this.keyColors$.next(currentColors);
   }
@@ -149,7 +157,12 @@ export class KeyboardStateService implements OnDestroy {
 
   resetAll(): void {
     this.keyColors$.next(new Map());
+    this.currentEffect$.next(null);
     this.ws.sendMessage({ type: 'reset' });
+  }
+
+  stopEffect(): void {
+    this.ws.sendMessage({ type: 'stop_effect' });
   }
 
   collectAllColors(): Record<string, RGBColor> {
@@ -190,6 +203,20 @@ export class KeyboardStateService implements OnDestroy {
 
       case 'effect_active': {
         this.currentEffect$.next(msg.effect);
+        break;
+      }
+
+      case 'device_status': {
+        this.keyboardConnected$.next(msg.connected);
+        this.keyboardLabel$.next(msg.label ?? null);
+        if (msg.connected) {
+          this.lastError$.next(null);
+        }
+        break;
+      }
+
+      case 'error': {
+        this.lastError$.next(msg.message);
         break;
       }
 

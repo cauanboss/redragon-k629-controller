@@ -79,7 +79,7 @@ export class FirmwareSnakeStrategy implements IEffectStrategy {
   }
 
   apply(controller: Controller, params: EffectParams): void {
-    controller.applyFirmwareEffect(
+    controller.applyGenericFirmwareBurst(
       FIRMWARE_EFFECTS.SNAKE,
       resolveColor(params),
       params.brightness ?? 3,
@@ -97,7 +97,7 @@ export class FirmwareStarTwinkleStrategy implements IEffectStrategy {
   }
 
   apply(controller: Controller, params: EffectParams): void {
-    controller.applyFirmwareEffect(
+    controller.applyGenericFirmwareBurst(
       FIRMWARE_EFFECTS.STAR_TWINKLE,
       resolveColor(params),
       params.brightness ?? 3,
@@ -115,7 +115,7 @@ export class FirmwareSineWaveStrategy implements IEffectStrategy {
   }
 
   apply(controller: Controller, params: EffectParams): void {
-    controller.applyFirmwareEffect(
+    controller.applyGenericFirmwareBurst(
       FIRMWARE_EFFECTS.SINE_WAVE,
       resolveColor(params),
       params.brightness ?? 3,
@@ -133,7 +133,7 @@ export class FirmwareWaterfallStrategy implements IEffectStrategy {
   }
 
   apply(controller: Controller, params: EffectParams): void {
-    controller.applyFirmwareEffect(
+    controller.applyGenericFirmwareBurst(
       FIRMWARE_EFFECTS.WATERFALL,
       resolveColor(params),
       params.brightness ?? 3,
@@ -151,7 +151,7 @@ export class FirmwareRainbowBlossomStrategy implements IEffectStrategy {
   }
 
   apply(controller: Controller, params: EffectParams): void {
-    controller.applyFirmwareEffect(
+    controller.applyGenericFirmwareBurst(
       FIRMWARE_EFFECTS.RAINBOW_BLOSSOM,
       resolveColor(params),
       params.brightness ?? 3,
@@ -169,7 +169,7 @@ export class FirmwareWheelStrategy implements IEffectStrategy {
   }
 
   apply(controller: Controller, params: EffectParams): void {
-    controller.applyFirmwareEffect(
+    controller.applyGenericFirmwareBurst(
       FIRMWARE_EFFECTS.WHEEL,
       resolveColor(params),
       params.brightness ?? 3,
@@ -181,21 +181,12 @@ export class FirmwareWheelStrategy implements IEffectStrategy {
 /**
  * Dispatcher — selects the correct Strategy or host-driven effect.
  *
- * Order: firmware strategies first, then registered host effects.
+ * Host-driven effects are tried first (required for K629CGO-PRO-M).
  */
 export class EffectDispatcher {
   private readonly strategies: IEffectStrategy[];
 
-  constructor(strategies: IEffectStrategy[] = [
-    new FirmwareStaticStrategy(),
-    new FirmwareRainbowStrategy(),
-    new FirmwareSnakeStrategy(),
-    new FirmwareStarTwinkleStrategy(),
-    new FirmwareSineWaveStrategy(),
-    new FirmwareWaterfallStrategy(),
-    new FirmwareRainbowBlossomStrategy(),
-    new FirmwareWheelStrategy(),
-  ]) {
+  constructor(strategies: IEffectStrategy[] = []) {
     this.strategies = strategies;
   }
 
@@ -209,8 +200,12 @@ export class EffectDispatcher {
     params: EffectParams = {},
   ): boolean {
     // Stop any running host-driven effect before applying a new one.
-    // This ensures clean transitions between firmware <-> host effects.
     controller.stopEffect();
+
+    // Prefer host-driven effects — firmware bursts do not work on K629CGO-PRO-M.
+    if (this.applyHostEffect(effectName, controller, params)) {
+      return true;
+    }
 
     for (const strategy of this.strategies) {
       if (strategy.matches(effectName)) {
@@ -219,7 +214,7 @@ export class EffectDispatcher {
       }
     }
 
-    return this.applyHostEffect(effectName, controller, params);
+    return false;
   }
 
   private applyHostEffect(
@@ -238,5 +233,17 @@ export class EffectDispatcher {
   }
 }
 
-/** Default dispatcher with built-in firmware strategies. */
+/** Default dispatcher — host-driven effects only (UI + WebSocket). */
 export const defaultEffectDispatcher = new EffectDispatcher();
+
+/** Firmware burst strategies for CLI protocol debugging on other models. */
+export const firmwareEffectDispatcher = new EffectDispatcher([
+  new FirmwareStaticStrategy(),
+  new FirmwareRainbowStrategy(),
+  new FirmwareSnakeStrategy(),
+  new FirmwareStarTwinkleStrategy(),
+  new FirmwareSineWaveStrategy(),
+  new FirmwareWaterfallStrategy(),
+  new FirmwareRainbowBlossomStrategy(),
+  new FirmwareWheelStrategy(),
+]);

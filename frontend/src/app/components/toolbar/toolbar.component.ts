@@ -85,7 +85,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   }
 
   onSpeedChange(): void {
-    this.ws.sendMessage({ type: 'set_speed', level: this.speed });
+    const firmwareLevel = Math.round(this.speed * 4 / 10);
+    this.ws.sendMessage({ type: 'set_speed', level: firmwareLevel });
   }
 
   onApplyColor(): void {
@@ -105,6 +106,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
   onClearSelection(): void {
     this.state.clearSelection();
+  }
+
+  onStopEffect(): void {
+    this.state.stopEffect();
   }
 
   onReset(): void {

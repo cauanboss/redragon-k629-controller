@@ -15,10 +15,10 @@ describe('StaticEffect', () => {
     expect(c1).toEqual(c2);
   });
 
-  it('returns red by default', () => {
+  it('returns warm orange by default', () => {
     const color = effect.getColorAt(key, 0, 0);
     expect(color.r).toBe(255);
-    expect(color.g).toBe(0);
+    expect(color.g).toBe(100);
     expect(color.b).toBe(0);
   });
 
@@ -161,7 +161,14 @@ describe('Effects Registry', () => {
     expect(names).toContain('static');
     expect(names).toContain('rainbow');
     expect(names).toContain('wave');
+    expect(names).toContain('snake');
+    expect(names).toContain('star-twinkle');
+    expect(names).toContain('sine-wave');
+    expect(names).toContain('waterfall');
+    expect(names).toContain('rainbow-blossom');
+    expect(names).toContain('wheel');
     expect(names).toContain('audio-visualizer');
+    expect(names).toContain('typing-reactive');
   });
 
   it('getEffect("audio-visualizer") returns an AudioVisualizerEffect instance', () => {

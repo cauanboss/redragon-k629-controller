@@ -64,7 +64,6 @@ export class ProfilesComponent implements OnInit, OnDestroy {
 
   onLoad(): void {
     if (!this.selectedProfile) {
-      alert('Select a profile to load');
       return;
     }
     this.ws.sendMessage({ type: 'profile_load', name: this.selectedProfile });

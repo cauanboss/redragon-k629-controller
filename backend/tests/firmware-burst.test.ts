@@ -18,7 +18,7 @@ describe('FirmwareBurstOperation (Template Method)', () => {
     };
   }
 
-  it('StaticFirmwareBurst sends clear frame + 5 burst frames = 6 total', () => {
+  it('StaticFirmwareBurst sends 5 firmware burst frames', () => {
     const device = createDevice();
     const operation = new StaticFirmwareBurst(
       device,
@@ -30,26 +30,30 @@ describe('FirmwareBurstOperation (Template Method)', () => {
     operation.execute();
 
     const send = device.sendFeatureReport as ReturnType<typeof vi.fn>;
-    // 1 clear per-key frame (all black) + 5 firmware burst frames
-    expect(send).toHaveBeenCalledTimes(6);
-    // First frame should be 382 bytes (per-key), rest 1032 (firmware burst)
-    const firstBuf = send.mock.calls[0][0] as Buffer;
-    expect(firstBuf.length).toBe(382);
+    // 5 firmware burst frames (handshake + 4 blocks), no clear frame
+    expect(send).toHaveBeenCalledTimes(5);
+    // All frames should be 1032 bytes (firmware burst)
+    for (let i = 0; i < 5; i++) {
+      const buf = send.mock.calls[i][0] as Buffer;
+      expect(buf.length).toBe(1032);
+    }
   });
 
-  it('RainbowFirmwareBurst sends clear frame + 5 burst frames = 6 total', () => {
+  it('RainbowFirmwareBurst sends 5 firmware burst frames', () => {
     const device = createDevice();
     const operation = new RainbowFirmwareBurst(device, frameBuilder, 2, 1);
 
     operation.execute();
 
     const send = device.sendFeatureReport as ReturnType<typeof vi.fn>;
-    expect(send).toHaveBeenCalledTimes(6);
-    const firstBuf = send.mock.calls[0][0] as Buffer;
-    expect(firstBuf.length).toBe(382);
+    expect(send).toHaveBeenCalledTimes(5);
+    for (let i = 0; i < 5; i++) {
+      const buf = send.mock.calls[i][0] as Buffer;
+      expect(buf.length).toBe(1032);
+    }
   });
 
-  it('GenericFirmwareBurst sends clear frame + 5 burst frames = 6 total', () => {
+  it('GenericFirmwareBurst sends 5 firmware burst frames', () => {
     const device = createDevice();
     const operation = new GenericFirmwareBurst(
       device, frameBuilder,
@@ -61,8 +65,10 @@ describe('FirmwareBurstOperation (Template Method)', () => {
     operation.execute();
 
     const send = device.sendFeatureReport as ReturnType<typeof vi.fn>;
-    expect(send).toHaveBeenCalledTimes(6);
-    const firstBuf = send.mock.calls[0][0] as Buffer;
-    expect(firstBuf.length).toBe(382);
+    expect(send).toHaveBeenCalledTimes(5);
+    for (let i = 0; i < 5; i++) {
+      const buf = send.mock.calls[i][0] as Buffer;
+      expect(buf.length).toBe(1032);
+    }
   });
 });
